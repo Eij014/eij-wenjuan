@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/eij-wenjuan.iml" filepath="$PROJECT_DIR$/.idea/eij-wenjuan.iml" />
+      <module fileurl="file://$PROJECT_DIR$/eij-wenjuan-api/eij-wenjuan-api.iml" filepath="$PROJECT_DIR$/eij-wenjuan-api/eij-wenjuan-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/eij-wenjuan-component/eij-wenjuan-component.iml" filepath="$PROJECT_DIR$/eij-wenjuan-component/eij-wenjuan-component.iml" />
+    </modules>
+  </component>
+</project>

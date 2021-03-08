@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>eij</groupId>
+        <artifactId>eij-wenjuan</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>eij-wenjuan-api</artifactId>
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>eij</groupId>
+            <artifactId>eij-wenjuan-component</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.api</groupId>
+            <artifactId>api-common</artifactId>
+            <version>1.10.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.appengine</groupId>
+            <artifactId>appengine-api-1.0-sdk</artifactId>
+            <version>1.9.86</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.appengine</groupId>
+            <artifactId>appengine-api-1.0-sdk</artifactId>
+            <version>1.9.86</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <defaultGoal>package</defaultGoal>
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.resource</include>
+                    <include>**/*.xml</include>
+                    <include>**/*.java</include>
+                    <include>**/*.kt</include>
+                    <include>**/*.conf</include>
+                    <include>**/*.tld</include>
+                    <include>**/*.*</include>
+                    <include>**/*.schemas</include>
+                    <include>**/*.handlers</include>
+                    <include>**/*.xsd</include>
+                </includes>
+                <excludes>
+                    <exclude>*.sql</exclude>
+                </excludes>
+            </resource>
+        </resources>
+        <finalName>${artifactId}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>com.eij.wenjuan.api.WenjuanApiStarter</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+<!--    <repositories>-->
+<!--        <repository>-->
+<!--            <id>spring-snapshots</id>-->
+<!--            <url>http://repo.spring.io/libs-snapshot</url>-->
+<!--        </repository>-->
+<!--    </repositories>-->
+
+<!--    <pluginRepositories>-->
+<!--        <pluginRepository>-->
+<!--            <id>spring-snapshots</id>-->
+<!--            <url>http://repo.spring.io/libs-snapshot</url>-->
+<!--        </pluginRepository>-->
+<!--    </pluginRepositories>-->
+</project>
