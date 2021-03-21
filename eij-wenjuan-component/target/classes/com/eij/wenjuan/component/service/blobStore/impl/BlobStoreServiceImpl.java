@@ -6,7 +6,7 @@ import com.eij.wenjuan.component.service.blobStore.BlobStoreService;
 
 
 /**
- * @author Zhu Haojie<eij00014@gmail.com>
+ * @author Eij<eij00014@gmail.com>
  * Created on 2021-02-07
  */
 @Service

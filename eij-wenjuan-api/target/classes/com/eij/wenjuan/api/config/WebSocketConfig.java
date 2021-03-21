@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 
 /**
- * @author Zhu Haojie<eij00014@gmail.com>
+ * @author Eij<eij00014@gmail.com>
  * Created on 2021-02-05
  */
 @Configuration

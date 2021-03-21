@@ -1,8 +1,15 @@
 package com.eij.wenjuan.api;
 
+import java.util.Set;
+
 import org.springframework.boot.SpringApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.EnableAsync;
+
+import com.eij.wenjuan.api.filter.CorsFilter;
+import com.eij.wenjuan.api.filter.UserContextFilter;
+import com.google.common.collect.Sets;
 
 /**
  * @author Eij<eij00014@gmail.com>
@@ -12,6 +19,19 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @PropertySource(value = {"classpath:common.properties"})
 @EnableAsync
 public class WenjuanApiStarter {
+
+    @Bean
+    public UserContextFilter.WhiteList whiteList() {
+        return new UserContextFilter.WhiteList() {
+            @Override
+            protected Set<String> getPatternSet() {
+                return Sets.newHashSet(
+                        "/v3/wenjuan/user/login"
+                );
+            }
+        };
+    }
+
     public static void main(String[] args) {
         SpringApplication.run(WenjuanApiStarter.class, args);
     }

@@ -7,14 +7,14 @@ import com.eij.wenjuan.component.bean.view.WenjuanResponseView;
 import com.eij.wenjuan.component.contants.ResponseCode;
 import com.fasterxml.jackson.annotation.JsonView;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
-
 
 /**
  * @author Eij<eij00014@gmail.com>
  * Created on 2021-02-06
  */
+@ApiModel
 public class WenjuanResponseMessage<T> {
     @JsonView(WenjuanResponseView.BasicView.class)
     @ApiModelProperty(allowableValues = "0")

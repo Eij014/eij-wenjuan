@@ -1,7 +1,7 @@
 package com.eij.wenjuan.component.bean.entity;
 
 /**
- * @author Zhu Haojie<eij00014@gmail.com>
+ * @author Eij<eij00014@gmail.com>
  * Created on 2021-03-02
  */
 

@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
 
 /**
- * @author Zhu Haojie<eij00014@gmail.com>
+ * @author Eij<eij00014@gmail.com>
  * Created on 2021-02-09
  */
 public class ObjectMapperUtils {

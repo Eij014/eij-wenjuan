@@ -9,11 +9,11 @@ import com.eij.wenjuan.component.bean.UserContext;
 public class LoginUserContext {
     private static final ThreadLocal<UserContext> USER_CONTEXT_THREAD_LOCAL = new ThreadLocal<>();
 
-    private static String getUserName() {
+    public static String getUserName() {
         return getUserContext().getUserName();
     }
 
-    private static UserContext getUserContext() {
+    public static UserContext getUserContext() {
         return USER_CONTEXT_THREAD_LOCAL.get();
     }
 

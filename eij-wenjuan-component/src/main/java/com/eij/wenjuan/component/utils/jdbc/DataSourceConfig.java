@@ -16,7 +16,7 @@ public class DataSourceConfig {
     public static DataSource getDataSource() {
         DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
         dataSourceBuilder.driverClassName("com.mysql.jdbc.Driver");
-        dataSourceBuilder.url("jdbc:mysql://192.168.0.107:3306/eij-wenjuan?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai");
+        dataSourceBuilder.url("jdbc:mysql://192.168.0.103:3306/eij-wenjuan?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai");
         dataSourceBuilder.username("eij");
         dataSourceBuilder.password("waibi014");
         return dataSourceBuilder.build();

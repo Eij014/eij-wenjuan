@@ -3,12 +3,15 @@ package com.eij.wenjuan.component.dao;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
+
+import com.eij.wenjuan.component.bean.VO.WenjuanDetailVO;
 import com.eij.wenjuan.component.bean.entity.Wenjuan;
 
 /**
@@ -24,6 +27,9 @@ public class WenjuanDao extends AbstractDao {
             + " (`wenjuan_id`, `wenjuan_title`,`committer`,`type`,`status`,`img_url`,`create_time`)"
             + " values"
             + " (:wenjuanId,:wenjuanTitle,:committer,:type,:status,:imgUrl,:createTime)";
+
+    private static final String SQL_SELECT_BY_ID = "select * from " + TABLE_NAME
+            + " where wenjuan_id = :wenjuanId";
 
     private static final String LIMIT_OFFSET = " limit :limit offset :offset";
 
@@ -51,6 +57,17 @@ public class WenjuanDao extends AbstractDao {
         int count = Optional.ofNullable(getReader().queryForObject(SQL_SELECT_TOTAL, source, Integer.class))
                 .orElse(0);
         return count;
+    }
+
+    public Wenjuan selectByWenjuanId(int wenjuanId) {
+        MapSqlParameterSource source = new MapSqlParameterSource();
+        source.addValue("wenjuanId", wenjuanId);
+        List<Wenjuan> wenjuanList = getReader().query(SQL_SELECT_BY_ID, source, ROW_MAPPER);
+        if (CollectionUtils.isNotEmpty(wenjuanList)) {
+            return wenjuanList.get(0);
+        } else {
+            return null;
+        }
     }
 
 }

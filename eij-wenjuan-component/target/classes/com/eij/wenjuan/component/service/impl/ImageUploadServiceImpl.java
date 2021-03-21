@@ -17,7 +17,7 @@ import com.eij.wenjuan.component.dao.ImageDao;
 import com.eij.wenjuan.component.service.ImageUploadService;
 
 /**
- * @author Zhu Haojie<eij00014@gmail.com>
+ * @author Eij<eij00014@gmail.com>
  * Created on 2021-02-07
  */
 @Service

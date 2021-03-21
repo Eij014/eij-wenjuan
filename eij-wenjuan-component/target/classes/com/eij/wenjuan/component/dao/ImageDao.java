@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import com.eij.wenjuan.component.bean.Image;
 
 /**
- * @author Zhu Haojie<eij00014@gmail.com>
+ * @author Eij<eij00014@gmail.com>
  * Created on 2021-02-08
  */
 @Lazy

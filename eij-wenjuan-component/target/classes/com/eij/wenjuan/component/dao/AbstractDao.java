@@ -7,7 +7,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import com.eij.wenjuan.component.utils.jdbc.DataSourceConfig;
 
 /**
- * @author Zhu Haojie<eij00014@gmail.com>
+ * @author Eij<eij00014@gmail.com>
  * Created on 2021-02-08
  */
 public abstract class AbstractDao implements Serializable {

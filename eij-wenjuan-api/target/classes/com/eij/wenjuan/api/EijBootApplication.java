@@ -20,7 +20,7 @@ import org.springframework.core.annotation.AliasFor;
 
 
 /**
- * @author Zhu Haojie<eij00014@gmail.com>
+ * @author Eij<eij00014@gmail.com>
  * Created on 2021-02-01
  */
 @Target({ElementType.TYPE})

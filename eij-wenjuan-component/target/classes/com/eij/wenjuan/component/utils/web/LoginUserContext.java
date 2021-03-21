@@ -3,17 +3,17 @@ package com.eij.wenjuan.component.utils.web;
 import com.eij.wenjuan.component.bean.UserContext;
 
 /**
- * @author Zhu Haojie<eij00014@gmail.com>
+ * @author Eij<eij00014@gmail.com>
  * Created on 2021-02-06
  */
 public class LoginUserContext {
     private static final ThreadLocal<UserContext> USER_CONTEXT_THREAD_LOCAL = new ThreadLocal<>();
 
-    private static String getUserName() {
+    public static String getUserName() {
         return getUserContext().getUserName();
     }
 
-    private static UserContext getUserContext() {
+    public static UserContext getUserContext() {
         return USER_CONTEXT_THREAD_LOCAL.get();
     }
 

@@ -5,7 +5,7 @@ import java.util.List;
 import com.eij.wenjuan.component.bean.entity.Wenjuan;
 
 /**
- * @author Zhu Haojie<eij00014@gmail.com>
+ * @author Eij<eij00014@gmail.com>
  * Created on 2021-03-02
  */
 
