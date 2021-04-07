@@ -9,17 +9,13 @@ import com.eij.wenjuan.component.bean.entity.Wenjuan;
  * Created on 2021-03-14
  */
 public class WenjuanDetailVO extends Wenjuan {
-    private List<QuestionVO> singleChoiceList;
 
-    private List<QuestionVO> multipleChoiceList;
-
-    private List<QuestionVO> pictureList;
-
-    private List<QuestionVO> videoList;
+    private List<QuestionVO> questionVOList;
 
     public WenjuanDetailVO(Wenjuan wenjuan) {
         this.setWenjuanId(wenjuan.getWenjuanId());
         this.setWenjuanTitle(wenjuan.getWenjuanTitle());
+        this.setWelcomeMsg(wenjuan.getWelcomeMsg());
         this.setCommitter(wenjuan.getCommitter());
         this.setImgUrl(wenjuan.getImgUrl());
         this.setCreateTime(wenjuan.getCreateTime());
@@ -27,35 +23,11 @@ public class WenjuanDetailVO extends Wenjuan {
         this.setType(wenjuan.getType());
     }
 
-    public List<QuestionVO> getSingleChoiceList() {
-        return singleChoiceList;
+    public List<QuestionVO> getQuestionVOList() {
+        return questionVOList;
     }
 
-    public void setSingleChoiceList(List<QuestionVO> singleChoiceList) {
-        this.singleChoiceList = singleChoiceList;
-    }
-
-    public List<QuestionVO> getMultipleChoiceList() {
-        return multipleChoiceList;
-    }
-
-    public void setMultipleChoiceList(List<QuestionVO> multipleChoiceList) {
-        this.multipleChoiceList = multipleChoiceList;
-    }
-
-    public List<QuestionVO> getPictureList() {
-        return pictureList;
-    }
-
-    public void setPictureList(List<QuestionVO> pictureList) {
-        this.pictureList = pictureList;
-    }
-
-    public List<QuestionVO> getVideoList() {
-        return videoList;
-    }
-
-    public void setVideoList(List<QuestionVO> videoList) {
-        this.videoList = videoList;
+    public void setQuestionVOList(List<QuestionVO> questionVOList) {
+        this.questionVOList = questionVOList;
     }
 }

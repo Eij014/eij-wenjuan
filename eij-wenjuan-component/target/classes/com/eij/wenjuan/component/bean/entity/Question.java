@@ -1,5 +1,7 @@
 package com.eij.wenjuan.component.bean.entity;
 
+import com.eij.wenjuan.component.bean.VO.QuestionVO;
+
 /**
  * @author Zhu Haojie<eij00014@gmail.com>
  * Created on 2021-03-14
@@ -18,7 +20,27 @@ public class Question {
 
     private String imgUrls;
 
-    private String questionIndex;
+    private int questionIndex;
+
+    public Question() {
+
+    }
+
+    public Question(Question question) {
+        this.must = question.getMust();
+        this.title = question.getTitle();
+        this.type = question.getType();
+        this.questionIndex = question.getQuestionIndex();
+    }
+
+    public Question(QuestionVO questionVO) {
+        this.questionId = questionVO.getQuestionId();
+        this.wenjuanId = questionVO.getWenjuanId();
+        this.imgUrls = questionVO.getImgUrls();
+        this.title = questionVO.getTitle();
+        this.type = questionVO.getType();
+        this.questionIndex = questionVO.getQuestionIndex();
+    }
 
     public int getQuestionId() {
         return questionId;
@@ -68,11 +90,11 @@ public class Question {
         this.imgUrls = imgUrls;
     }
 
-    public String getQuestionIndex() {
+    public int getQuestionIndex() {
         return questionIndex;
     }
 
-    public void setQuestionIndex(String questionIndex) {
+    public void setQuestionIndex(int questionIndex) {
         this.questionIndex = questionIndex;
     }
 }

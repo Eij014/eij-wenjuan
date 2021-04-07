@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.eij.wenjuan.api.request.WenjuanEditRequest;
 import com.eij.wenjuan.api.response.WenjuanResponseMessage;
 import com.eij.wenjuan.component.bean.Image;
 import com.eij.wenjuan.component.bean.VO.WenjuanDetailVO;
@@ -29,7 +30,7 @@ import com.eij.wenjuan.component.service.WenjuanService;
  * Created on 2021-02-05
  */
 @RestController
-@RequestMapping(path = {"/v3/wenjuan/"})
+@RequestMapping(path = {"/wenjuan/"})
 public class WenjuanController {
 
     private static final Logger logger = LoggerFactory.getLogger(WenjuanController.class);
@@ -56,11 +57,35 @@ public class WenjuanController {
 
     @PostMapping("/list")
     public WenjuanResponseMessage<WenjuanVO> getWenjuanList(@RequestBody SearchPaging searchPaging) {
+        int a = 1;
         return WenjuanResponseMessage.success(wenjuanService.getWenjuanList(searchPaging));
     }
 
+    @PostMapping("/create/update")
+    public WenjuanResponseMessage<Integer> createOrUpdateWenjuan(@RequestBody WenjuanEditRequest wenjuanEditRequest) {
+        wenjuanService
+                .createOrUpdateWenjuan(wenjuanEditRequest.getWenjuanId(),
+                        wenjuanEditRequest.getImgUrl(),
+                        wenjuanEditRequest.getWenjuanTitle(),
+                        wenjuanEditRequest.getWelcomeMsg(),
+                        wenjuanEditRequest.getQuestionVOList());
+        return WenjuanResponseMessage.success("保存成功", 1);
+    }
+
+
     @GetMapping("/detail")
     public WenjuanResponseMessage<WenjuanDetailVO> getWenjuanDetail(@RequestParam("wenjuanId") int wenjuanId) {
-        return WenjuanResponseMessage.success();
+        return WenjuanResponseMessage.success(wenjuanService.getWenjuanDetail(wenjuanId));
     }
+
+    @GetMapping("/init/img/url")
+    public WenjuanResponseMessage<String> getInitImgUrl() {
+        return WenjuanResponseMessage.success(wenjuanService.getInitImgUrs());
+    }
+
+    @GetMapping("/publish")
+    public WenjuanResponseMessage<Integer> publish(@RequestParam("wenjuanId") int wenjuanId) {
+        return WenjuanResponseMessage.success(wenjuanService.publish(wenjuanId));
+    }
+
 }

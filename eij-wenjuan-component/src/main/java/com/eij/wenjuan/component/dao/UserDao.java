@@ -9,7 +9,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import com.eij.wenjuan.component.bean.entity.User;
-import com.eij.wenjuan.component.bean.entity.Wenjuan;
 
 /**
  * @author Zhu Haojie<eij00014@gmail.com>

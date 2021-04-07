@@ -14,9 +14,19 @@ public class QuestionVO extends Question {
 
     private List<String> imgUrlList;
 
-    public QuestionVO(List<Option> optionList) {
+    public QuestionVO() {
+    }
+
+    public QuestionVO(int questionId, String type, int must, String title, String imgUrls, int questionIndex, List<Option> optionList) {
+        this.setQuestionId(questionId);
+        this.setType(type);
+        this.setMust(must);
+        this.setTitle(title);
+        this.setImgUrls(imgUrls);
+        this.setQuestionIndex(questionIndex);
         this.optionList = optionList;
     }
+
 
     public List<Option> getOptionList() {
         return optionList;

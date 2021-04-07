@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.EnableAsync;
 
-import com.eij.wenjuan.api.filter.CorsFilter;
 import com.eij.wenjuan.api.filter.UserContextFilter;
 import com.google.common.collect.Sets;
 
@@ -26,7 +25,8 @@ public class WenjuanApiStarter {
             @Override
             protected Set<String> getPatternSet() {
                 return Sets.newHashSet(
-                        "/v3/wenjuan/user/login"
+                        "/wenjuan/user/login",
+                        "/wenjuan/upload/image"
                 );
             }
         };

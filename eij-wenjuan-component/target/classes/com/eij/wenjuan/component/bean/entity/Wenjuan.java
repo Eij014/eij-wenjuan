@@ -8,11 +8,24 @@ package com.eij.wenjuan.component.bean.entity;
 public class Wenjuan {
     private int wenjuanId;
     private String wenjuanTitle;
+    private String welcomeMsg;
     private String committer;
-    private String type;
+    private int type;
     private int status;
     private String imgUrl;
     private long createTime;
+
+    public Wenjuan() {
+    }
+
+    public Wenjuan(String wenjuanTitle, String welcomeMsg, String committer, int type, int status, String imgUrl) {
+        this.wenjuanTitle = wenjuanTitle;
+        this.welcomeMsg = welcomeMsg;
+        this.committer = committer;
+        this.type = type;
+        this.status = status;
+        this.imgUrl = imgUrl;
+    }
 
     public int getWenjuanId() {
         return wenjuanId;
@@ -30,6 +43,14 @@ public class Wenjuan {
         this.wenjuanTitle = wenjuanTitle;
     }
 
+    public String getWelcomeMsg() {
+        return welcomeMsg;
+    }
+
+    public void setWelcomeMsg(String welcomeMsg) {
+        this.welcomeMsg = welcomeMsg;
+    }
+
     public String getCommitter() {
         return committer;
     }
@@ -38,11 +59,11 @@ public class Wenjuan {
         this.committer = committer;
     }
 
-    public String getType() {
+    public int getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(int type) {
         this.type = type;
     }
 

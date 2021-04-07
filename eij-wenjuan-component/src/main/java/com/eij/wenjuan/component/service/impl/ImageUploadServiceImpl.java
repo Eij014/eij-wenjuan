@@ -25,7 +25,7 @@ public class ImageUploadServiceImpl implements ImageUploadService {
 
     private static final Logger logger = LoggerFactory.getLogger(ImageUploadServiceImpl.class);
 
-    private static final String SERVER_NAME = "eij.ink/image/%s";
+    private static final String SERVER_NAME = "http://eij.ink:27546/image/%s";
 
     @Autowired
     private ImageDao imageDao;

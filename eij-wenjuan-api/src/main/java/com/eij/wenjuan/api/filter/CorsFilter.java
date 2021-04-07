@@ -13,7 +13,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import com.google.common.net.HttpHeaders;
@@ -33,13 +32,15 @@ public class CorsFilter implements Filter {
         HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
         String header = httpServletRequest.getHeader(HttpHeaders.ORIGIN);
-        if (header != null && ALLOW_ORIGINS.contains(header)) {
+        if (header == null || header != null && ALLOW_ORIGINS.contains(header)) {
             httpServletResponse.setHeader("Access-Control-Allow-Origin", "http://localhost:8081");
             httpServletResponse.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
             httpServletResponse.setHeader("Access-Control-Max-Age", "6000");
             httpServletResponse.setHeader("Access-Control-Allow-Headers",
                     "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
             httpServletResponse.setHeader("Content-Type", "application/json;charset-UTF-8");
+            httpServletResponse.setHeader("Content-Type", "multipart/form-data;charset=utf-8");
+
             httpServletResponse.setHeader("Access-Control-Allow-Credentials", "true");
             filterChain.doFilter(httpServletRequest, httpServletResponse);
         }

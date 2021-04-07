@@ -1,7 +1,5 @@
 package com.eij.wenjuan.component.service.impl;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -21,7 +19,6 @@ import com.eij.wenjuan.component.dao.UserDao;
 import com.eij.wenjuan.component.exception.ServiceException;
 import com.eij.wenjuan.component.exception.WenjuanErrors;
 import com.eij.wenjuan.component.service.UserService;
-import com.eij.wenjuan.component.utils.web.LoginUserContext;
 
 /**
  * @author Zhu Haojie<eij00014@gmail.com>

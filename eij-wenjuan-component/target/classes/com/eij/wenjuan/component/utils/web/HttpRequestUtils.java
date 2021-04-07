@@ -1,10 +1,5 @@
 package com.eij.wenjuan.component.utils.web;
 
-
-import java.security.Key;
-
-import javax.crypto.Cipher;
-import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 

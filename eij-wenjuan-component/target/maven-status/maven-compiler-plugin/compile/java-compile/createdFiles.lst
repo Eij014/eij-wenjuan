@@ -41,6 +41,7 @@ com\eij\wenjuan\component\service\impl\OptionServiceImpl.class
 com\eij\wenjuan\component\bean\VO\QuestionVO.class
 com\eij\wenjuan\component\dao\QuestionDao.class
 com\eij\wenjuan\component\service\WenjuanService.class
+com\eij\wenjuan\component\service\impl\WenjuanServiceImpl$1.class
 com\eij\wenjuan\component\utils\web\LoginUserContext.class
 com\eij\wenjuan\component\bean\entity\Option.class
 com\eij\wenjuan\component\service\impl\ImageUploadServiceImpl.class

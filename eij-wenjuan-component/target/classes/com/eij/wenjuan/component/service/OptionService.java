@@ -1,6 +1,7 @@
 package com.eij.wenjuan.component.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.eij.wenjuan.component.bean.entity.Option;
 
@@ -10,4 +11,14 @@ import com.eij.wenjuan.component.bean.entity.Option;
  */
 public interface OptionService {
     List<Option> getOptionByQuestionIds(List<Integer> questionIdList);
+
+    void batchInsertByMap(Map<Integer, List<Option>> questionIdOptionMap);
+
+    void batchInsert(List<Option> optionList);
+
+    void batchUpdate(List<Option> optionList);
+
+    void deleteByQuestionIds(List<Integer> questionIdList);
+
+    void deleteByOptionIds(List<Integer> optionIdList);
 }

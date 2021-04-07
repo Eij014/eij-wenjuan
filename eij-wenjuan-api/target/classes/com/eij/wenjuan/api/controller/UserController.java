@@ -17,7 +17,7 @@ import com.eij.wenjuan.component.service.UserService;
  * Created on 2021-03-13
  */
 @RestController
-@RequestMapping(path = {"/v3/wenjuan/user"})
+@RequestMapping(path = {"/wenjuan/user"})
 public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 

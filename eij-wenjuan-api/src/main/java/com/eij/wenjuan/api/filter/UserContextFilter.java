@@ -19,14 +19,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import com.eij.wenjuan.component.bean.UserContext;
 import com.eij.wenjuan.component.utils.web.HttpRequestUtils;
 import com.eij.wenjuan.component.utils.web.LoginUserContext;
-import com.google.common.collect.Sets;
 
 /**
  * @author Eij<eij00014@gmail.com>
@@ -36,16 +34,8 @@ import com.google.common.collect.Sets;
 public class UserContextFilter implements Filter {
     private static final Logger logger = LoggerFactory.getLogger(UserContextFilter.class);
 
-    //private static final String ROOT_PATH = "/";
-
-    private static final String VERSION_PATH = "/v";
-
     @Autowired(required = false)
     private UserContextFilter.WhiteList whiteList;
-
-    private static final Set<String> INTERNAL_HEALTH_PATH = Sets.newHashSet(
-            //ROOT_PATH,
-            "/v3");
 
     public abstract static class WhiteList {
 
@@ -118,12 +108,12 @@ public class UserContextFilter implements Filter {
 
         //版本前缀
         String path = ((HttpServletRequest) request).getRequestURI();
-        if (path.startsWith(VERSION_PATH)) {
-            int secondIndex = path.indexOf("/", 1);
-            if (secondIndex > 0) {
-                requestServerName += path.substring(0, secondIndex);
-            }
-        }
+//        if (path.startsWith(VERSION_PATH)) {
+//            int secondIndex = path.indexOf("/", 1);
+//            if (secondIndex > 0) {
+//                requestServerName += path.substring(0, secondIndex);
+//            }
+//        }
 
         userContext.setRequestServerName(requestServerName);
 

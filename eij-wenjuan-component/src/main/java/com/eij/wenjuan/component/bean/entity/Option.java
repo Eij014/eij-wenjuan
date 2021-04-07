@@ -11,9 +11,18 @@ public class Option {
 
     private String optionName;
 
-    private String optionIndex;
+    private int optionIndex;
 
-    private String imgUrl;
+    public Option() {
+
+    }
+
+    public Option(int optionId, int questionId, String optionName, int optionIndex) {
+            this.optionId = optionId;
+            this.questionId = questionId;
+            this.optionName = optionName;
+            this.optionIndex = optionIndex;
+    }
 
     public int getOptionId() {
         return optionId;
@@ -39,19 +48,11 @@ public class Option {
         this.optionName = optionName;
     }
 
-    public String getOptionIndex() {
+    public int getOptionIndex() {
         return optionIndex;
     }
 
-    public void setOptionIndex(String optionIndex) {
+    public void setOptionIndex(int optionIndex) {
         this.optionIndex = optionIndex;
-    }
-
-    public String getImgUrl() {
-        return imgUrl;
-    }
-
-    public void setImgUrl(String imgUrl) {
-        this.imgUrl = imgUrl;
     }
 }

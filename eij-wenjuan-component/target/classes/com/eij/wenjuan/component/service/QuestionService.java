@@ -10,4 +10,10 @@ import com.eij.wenjuan.component.bean.entity.Question;
  */
 public interface QuestionService {
     List<Question> getByWenjuanId(int wenjuanId);
+
+    int insert(Question question);
+
+    void updateQuestion(List<Question> questionList);
+
+    void deleteByIds(List<Integer> questionIdList);
 }
