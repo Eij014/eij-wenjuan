@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.eij.wenjuan.api.request.WenjuanAnswerRequest;
 import com.eij.wenjuan.api.request.WenjuanEditRequest;
 import com.eij.wenjuan.api.response.WenjuanResponseMessage;
 import com.eij.wenjuan.component.bean.Image;
@@ -88,4 +89,13 @@ public class WenjuanController {
         return WenjuanResponseMessage.success(wenjuanService.publish(wenjuanId));
     }
 
+    @PostMapping("/answer")
+    public WenjuanResponseMessage<Integer> answer(@RequestBody WenjuanAnswerRequest wenjuanAnswerRequest) {
+        return WenjuanResponseMessage.success(wenjuanService.answer(wenjuanAnswerRequest.getWenjuanId(), wenjuanAnswerRequest.getResultList()));
+    }
+
+    @GetMapping("/ip")
+    public WenjuanResponseMessage<Object> getAddress(@RequestParam("ip") String ip) {
+        return WenjuanResponseMessage.success(wenjuanService.getAddress(ip));
+    }
 }

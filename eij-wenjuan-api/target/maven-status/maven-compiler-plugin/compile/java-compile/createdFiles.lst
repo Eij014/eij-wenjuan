@@ -5,6 +5,7 @@ com\eij\wenjuan\api\WenjuanApiStarter.class
 com\eij\wenjuan\api\request\UserLoginRequest.class
 com\eij\wenjuan\api\filter\CorsFilter.class
 com\eij\wenjuan\api\config\Log.class
+com\eij\wenjuan\api\request\WenjuanAnswerRequest.class
 com\eij\wenjuan\api\controller\WenjuanController.class
 com\eij\wenjuan\api\WenjuanApiStarter$1.class
 com\eij\wenjuan\api\config\WebSocketConfig.class

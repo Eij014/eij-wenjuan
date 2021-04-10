@@ -34,6 +34,8 @@ import com.eij.wenjuan.component.utils.web.LoginUserContext;
 public class UserContextFilter implements Filter {
     private static final Logger logger = LoggerFactory.getLogger(UserContextFilter.class);
 
+    private static final String ANSWER_PRE = "/wenjuan/answer";
+
     @Autowired(required = false)
     private UserContextFilter.WhiteList whiteList;
 
@@ -75,6 +77,28 @@ public class UserContextFilter implements Filter {
         String path = ((HttpServletRequest) request).getServletPath();
         if (whiteList != null && whiteList.contains(path)) {
             chain.doFilter(request, response);
+            return;
+        }
+
+        if (path.startsWith(ANSWER_PRE)) {
+            UserContext userContext = new UserContext();
+            //回答问题页面获取用户ip
+            String ip = ((HttpServletRequest) request).getHeader("x-forwarded-for");
+            if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+                ip = ((HttpServletRequest) request).getHeader("Proxy-Client-IP");
+            }
+            if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+                ip = ((HttpServletRequest) request).getHeader("WL-Proxy-Client-IP");
+            }
+            if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+                ip = request.getRemoteAddr();
+            }
+            if (ip.equals("0:0:0:0:0:0:0:1")) {
+                ip = "本地";
+            }
+            userContext.setIp(ip);
+            LoginUserContext.setUserContext(userContext);
+            chain.doFilter((HttpServletRequest) request, (HttpServletResponse) response);
             return;
         }
 

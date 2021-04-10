@@ -10,7 +10,7 @@ public class UserContext {
     private String phoneNumber;
     private String jSessionId;
     private String requestServerName;
-
+    private String ip;
 
     public String getUserName() {
         return userName;
@@ -50,5 +50,13 @@ public class UserContext {
 
     public void setRequestServerName(String requestServerName) {
         this.requestServerName = requestServerName;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
     }
 }

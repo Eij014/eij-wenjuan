@@ -1,5 +1,12 @@
 package com.eij.wenjuan.component.service.impl;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -11,17 +18,23 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.eij.wenjuan.component.bean.OpenApi.AmapResponse;
 import com.eij.wenjuan.component.bean.VO.QuestionVO;
 import com.eij.wenjuan.component.bean.VO.WenjuanDetailVO;
 import com.eij.wenjuan.component.bean.VO.WenjuanVO;
 import com.eij.wenjuan.component.bean.entity.Option;
 import com.eij.wenjuan.component.bean.entity.Question;
+import com.eij.wenjuan.component.bean.entity.Result;
 import com.eij.wenjuan.component.bean.entity.Wenjuan;
+import com.eij.wenjuan.component.bean.request.AnswerRequest;
 import com.eij.wenjuan.component.bean.sys.SearchPaging;
+import com.eij.wenjuan.component.contants.QuestionType;
 import com.eij.wenjuan.component.dao.WenjuanDao;
 import com.eij.wenjuan.component.service.OptionService;
 import com.eij.wenjuan.component.service.QuestionService;
+import com.eij.wenjuan.component.service.ResultService;
 import com.eij.wenjuan.component.service.WenjuanService;
+import com.eij.wenjuan.component.utils.ObjectMapperUtils;
 import com.eij.wenjuan.component.utils.web.LoginUserContext;
 import com.google.common.collect.Lists;
 
@@ -56,6 +69,9 @@ public class WenjuanServiceImpl implements WenjuanService {
 
     @Autowired
     private OptionService optionService;
+
+    @Autowired
+    private ResultService resultService;
 
     @Override
     public WenjuanVO getWenjuanList(SearchPaging searchPaging) {
@@ -206,6 +222,66 @@ public class WenjuanServiceImpl implements WenjuanService {
                             }).collect(Collectors.toList()));
                     return null;
                 }).collect(Collectors.toList());
+    }
+
+    @Override
+    public int answer(int wenjuanId, List<AnswerRequest> answerRequestList) {
+        List<Result> resultList = Lists.newArrayList();
+        String ip = LoginUserContext.getUserContext().getIp();
+        //按问题类型分类
+        Map<String, List<AnswerRequest>> answerMap = answerRequestList
+                .stream()
+                .collect(Collectors.groupingBy(AnswerRequest::getType));
+
+        answerMap.entrySet().stream().forEach(o -> {
+            QuestionType questionType = QuestionType.parse(o.getKey());
+            switch (questionType) {
+                case SINGLE_CHOICE:
+                case PICTURE:
+                case VIDEO:
+                    o.getValue().forEach(answer -> {
+                        String optionIdList = ObjectMapperUtils.toJson(Lists.newArrayList(answer.getOptionId()));
+                        resultList.add(new Result(wenjuanId, answer.getQuestionId(),
+                                optionIdList, "", questionType.getNameCamel(), ip));
+                    });
+                    break;
+                case MULTIPLE_CHOICE:
+                    o.getValue().forEach(answer -> {
+                        resultList.add(new Result(wenjuanId, answer.getQuestionId(),
+                                ObjectMapperUtils.toJson(answer.getOptionIdList()),
+                                "", questionType.getNameCamel(), ip));
+                    });
+                    break;
+                default:
+                    break;
+            }
+        });
+        resultService.batchInsert(resultList);
+        return resultList.size();
+    }
+    @Override
+    public Object getAddress(String ip) {
+        String key = "99737f308b9b2d3059ba915c757b8264";
+        String url = String.format("https://restapi.amap.com/v3/ip?key=%s&ip=%s", key, ip);
+        try {
+            InputStream is = new URL(url).openStream();
+            BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+            String jsonText = readAll(rd);
+            AmapResponse amapResponse = ObjectMapperUtils.fromJson(jsonText, AmapResponse.class);
+            return amapResponse;
+        } catch (IOException e) {
+            logger.info("get ip address error.ip={}\nerror={}", ip, e.getMessage());
+        }
+        return  null;
+    }
+
+    private static String readAll(Reader rd) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        int cp;
+        while ((cp = rd.read()) != -1) {
+            sb.append((char) cp);
+        }
+        return sb.toString();
     }
 }
 
