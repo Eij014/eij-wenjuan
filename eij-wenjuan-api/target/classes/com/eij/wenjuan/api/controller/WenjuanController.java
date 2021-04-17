@@ -20,6 +20,7 @@ import com.eij.wenjuan.api.request.WenjuanAnswerRequest;
 import com.eij.wenjuan.api.request.WenjuanEditRequest;
 import com.eij.wenjuan.api.response.WenjuanResponseMessage;
 import com.eij.wenjuan.component.bean.Image;
+import com.eij.wenjuan.component.bean.OpenApi.AmapResponse;
 import com.eij.wenjuan.component.bean.VO.WenjuanDetailVO;
 import com.eij.wenjuan.component.bean.VO.WenjuanVO;
 import com.eij.wenjuan.component.bean.sys.SearchPaging;
@@ -95,7 +96,7 @@ public class WenjuanController {
     }
 
     @GetMapping("/ip")
-    public WenjuanResponseMessage<Object> getAddress(@RequestParam("ip") String ip) {
+    public WenjuanResponseMessage<AmapResponse> getAddress(@RequestParam("ip") String ip) {
         return WenjuanResponseMessage.success(wenjuanService.getAddress(ip));
     }
 }

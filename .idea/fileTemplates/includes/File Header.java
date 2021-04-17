@@ -1,4 +1,4 @@
 /**
- * @author Zhu Haojie<eij00014@gmail.com>
+ * @author Eij<eij00014@gmail.com>
  * Created on ${YEAR}-${MONTH}-${DAY}
  */

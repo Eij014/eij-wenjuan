@@ -13,7 +13,7 @@ import com.eij.wenjuan.api.response.WenjuanResponseMessage;
 import com.eij.wenjuan.component.service.UserService;
 
 /**
- * @author Zhu Haojie<eij00014@gmail.com>
+ * @author Eij<eij00014@gmail.com>
  * Created on 2021-03-13
  */
 @RestController

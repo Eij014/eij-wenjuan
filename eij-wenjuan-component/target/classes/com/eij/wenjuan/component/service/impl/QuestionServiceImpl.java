@@ -13,7 +13,7 @@ import com.eij.wenjuan.component.dao.QuestionDao;
 import com.eij.wenjuan.component.service.QuestionService;
 
 /**
- * @author Zhu Haojie<eij00014@gmail.com>
+ * @author Eij<eij00014@gmail.com>
  * Created on 2021-03-14
  */
 @Service

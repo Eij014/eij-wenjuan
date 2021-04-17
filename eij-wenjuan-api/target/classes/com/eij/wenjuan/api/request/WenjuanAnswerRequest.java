@@ -5,7 +5,7 @@ import java.util.List;
 import com.eij.wenjuan.component.bean.request.AnswerRequest;
 
 /**
- * @author Zhu Haojie<eij00014@gmail.com>
+ * @author Eij<eij00014@gmail.com>
  * Created on 2021-04-09
  */
 public class WenjuanAnswerRequest {

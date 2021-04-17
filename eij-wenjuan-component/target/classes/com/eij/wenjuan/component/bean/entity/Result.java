@@ -11,7 +11,7 @@ public class Result {
 
     private Integer questionId;
 
-    private String optionIdList;
+    private Integer optionId;
 
     private String text;
 
@@ -19,18 +19,21 @@ public class Result {
 
     private Long createTime;
 
-    private String ip;
+    private String province;
+
+    private String city;
 
     public Result() {
     }
 
-    public Result(Integer wenjuanId, Integer questionId, String optionIdList, String text, String type, String ip) {
+    public Result(Integer wenjuanId, Integer questionId, Integer optionId, String text, String type, String province, String city) {
         this.wenjuanId = wenjuanId;
         this.questionId = questionId;
-        this.optionIdList = optionIdList;
+        this.optionId = optionId;
         this.text = text;
         this.type = type;
-        this.ip = ip;
+        this.province = province;
+        this.city = city;
     }
 
     public Integer getId() {
@@ -57,12 +60,12 @@ public class Result {
         this.questionId = questionId;
     }
 
-    public String getOptionIdList() {
-        return optionIdList;
+    public Integer getOptionId() {
+        return optionId;
     }
 
-    public void setOptionIdList(String optionIdList) {
-        this.optionIdList = optionIdList;
+    public void setOptionId(Integer optionId) {
+        this.optionId = optionId;
     }
 
     public String getText() {
@@ -89,11 +92,19 @@ public class Result {
         this.createTime = createTime;
     }
 
-    public String getIp() {
-        return ip;
+    public String getProvince() {
+        return province;
     }
 
-    public void setIp(String ip) {
-        this.ip = ip;
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
     }
 }

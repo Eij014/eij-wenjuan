@@ -26,7 +26,9 @@ public class WenjuanApiStarter {
             protected Set<String> getPatternSet() {
                 return Sets.newHashSet(
                         "/wenjuan/user/login",
-                        "/wenjuan/upload/image"
+                        "/wenjuan/upload/image",
+                        "/browserConnection/buildInfo",
+                        "/startTime"
                 );
             }
         };

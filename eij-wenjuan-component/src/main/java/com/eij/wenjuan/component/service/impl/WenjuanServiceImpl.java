@@ -11,27 +11,41 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.eij.wenjuan.component.bean.Data;
+import com.eij.wenjuan.component.bean.NameValueBean;
 import com.eij.wenjuan.component.bean.OpenApi.AmapResponse;
 import com.eij.wenjuan.component.bean.VO.QuestionVO;
+import com.eij.wenjuan.component.bean.VO.ResultVO;
 import com.eij.wenjuan.component.bean.VO.WenjuanDetailVO;
 import com.eij.wenjuan.component.bean.VO.WenjuanVO;
 import com.eij.wenjuan.component.bean.entity.Option;
 import com.eij.wenjuan.component.bean.entity.Question;
+import com.eij.wenjuan.component.bean.entity.Recycle;
 import com.eij.wenjuan.component.bean.entity.Result;
 import com.eij.wenjuan.component.bean.entity.Wenjuan;
 import com.eij.wenjuan.component.bean.request.AnswerRequest;
+import com.eij.wenjuan.component.bean.result.EchartsBarOption;
+import com.eij.wenjuan.component.bean.result.EchartsOptionHover;
+import com.eij.wenjuan.component.bean.result.EchartsPieOption;
+import com.eij.wenjuan.component.bean.result.EchartsPieSeries;
+import com.eij.wenjuan.component.bean.result.EchartsSeries;
+import com.eij.wenjuan.component.bean.result.OptionTitle;
+import com.eij.wenjuan.component.bean.result.WenjuanResult;
 import com.eij.wenjuan.component.bean.sys.SearchPaging;
 import com.eij.wenjuan.component.contants.QuestionType;
 import com.eij.wenjuan.component.dao.WenjuanDao;
 import com.eij.wenjuan.component.service.OptionService;
 import com.eij.wenjuan.component.service.QuestionService;
+import com.eij.wenjuan.component.service.RecycleService;
 import com.eij.wenjuan.component.service.ResultService;
 import com.eij.wenjuan.component.service.WenjuanService;
 import com.eij.wenjuan.component.utils.ObjectMapperUtils;
@@ -61,6 +75,19 @@ public class WenjuanServiceImpl implements WenjuanService {
         add("http://eij.ink:27546/image/6a9b68cc5119d985c863d1762a1c6a53.png");
     }};
 
+    private static final List<String> COLOR_LIST = new ArrayList<String>() {{
+       add("#7FFF00");
+       add("#FFFF00");
+       add("#FF6347");
+       add("#7B68EE");
+       add("#00CED1");
+       add("#696969");
+       add("#483D8B");
+       add("#008080");
+       add("#FFFFE0");
+       add("#FFE4B5");
+    }};
+
     @Autowired
     private WenjuanDao wenjuanDao;
 
@@ -72,6 +99,9 @@ public class WenjuanServiceImpl implements WenjuanService {
 
     @Autowired
     private ResultService resultService;
+
+    @Autowired
+    private RecycleService recycleService;
 
     @Override
     public WenjuanVO getWenjuanList(SearchPaging searchPaging) {
@@ -228,6 +258,16 @@ public class WenjuanServiceImpl implements WenjuanService {
     public int answer(int wenjuanId, List<AnswerRequest> answerRequestList) {
         List<Result> resultList = Lists.newArrayList();
         String ip = LoginUserContext.getUserContext().getIp();
+        AmapResponse  amapResponse = getAddress(ip);
+        String province = StringUtils.isNotEmpty(amapResponse.getProvince())
+                ? amapResponse.getProvince().replace("市", "").replace("省", "")
+                  .replace("维吾尔族自治区", "").replace("壮族自治区", "")
+                  .replace("回族自治区", "").replace("自治区", "")
+                  .replace("特别行政区", "")
+                : "";
+        String city = StringUtils.isNotEmpty(amapResponse.getCity())
+                ? amapResponse.getCity()
+                : "";
         //按问题类型分类
         Map<String, List<AnswerRequest>> answerMap = answerRequestList
                 .stream()
@@ -240,27 +280,28 @@ public class WenjuanServiceImpl implements WenjuanService {
                 case PICTURE:
                 case VIDEO:
                     o.getValue().forEach(answer -> {
-                        String optionIdList = ObjectMapperUtils.toJson(Lists.newArrayList(answer.getOptionId()));
                         resultList.add(new Result(wenjuanId, answer.getQuestionId(),
-                                optionIdList, "", questionType.getNameCamel(), ip));
+                                answer.getOptionId(), "", questionType.getNameCamel(), province, city));
                     });
                     break;
                 case MULTIPLE_CHOICE:
                     o.getValue().forEach(answer -> {
-                        resultList.add(new Result(wenjuanId, answer.getQuestionId(),
-                                ObjectMapperUtils.toJson(answer.getOptionIdList()),
-                                "", questionType.getNameCamel(), ip));
+                        resultList.addAll(answer.getOptionIdList().stream().map(optionId -> {
+                                return new Result(wenjuanId, answer.getQuestionId(),
+                                        optionId, "", questionType.getNameCamel(), province, city);
+                        }).collect(Collectors.toList()));
                     });
                     break;
                 default:
                     break;
             }
         });
+        recycleService.insert(new Recycle(wenjuanId, province, city));
         resultService.batchInsert(resultList);
         return resultList.size();
     }
     @Override
-    public Object getAddress(String ip) {
+    public AmapResponse getAddress(String ip) {
         String key = "99737f308b9b2d3059ba915c757b8264";
         String url = String.format("https://restapi.amap.com/v3/ip?key=%s&ip=%s", key, ip);
         try {
@@ -282,6 +323,78 @@ public class WenjuanServiceImpl implements WenjuanService {
             sb.append((char) cp);
         }
         return sb.toString();
+    }
+
+    @Override
+    public WenjuanResult getWenjuanResult(int wenjuanId) {
+        List<EchartsBarOption> result = Lists.newArrayList();
+        List<EchartsPieOption> pieResult = Lists.newArrayList();
+        Map<Integer, String> questionNameMap = questionService.getByWenjuanId(wenjuanId)
+                .stream()
+                .collect(Collectors.toMap(Question::getQuestionId, Question::getTitle));
+        Map<Integer, Map<Integer, String>> optionNameMap =
+                optionService.getOptionByQuestionIds(Lists.newArrayList(questionNameMap.keySet()))
+                .stream()
+                .collect(Collectors.groupingBy(Option::getQuestionId,
+                         Collectors.toMap(Option::getOptionId, Option::getOptionName)));
+        //现根据questionId，再根据optionId group by,List<ResultVO>的数量为每个选项的数量
+        Map<Integer, Map<Integer, List<ResultVO>>> questionIdMap = resultService.getByWenjuanId(wenjuanId)
+                .stream()
+                .collect(Collectors.groupingBy(ResultVO::getQuestionId,
+                         Collectors.groupingBy(ResultVO::getOptionId)));
+        questionIdMap.entrySet().stream().forEach(question -> {
+            EchartsBarOption echartsBarOption = new EchartsBarOption();
+            echartsBarOption.setQuestionId(question.getKey());
+            echartsBarOption.setQuestionName(questionNameMap.get(question.getKey()));
+            echartsBarOption.setxAxis(new Data(Lists.newArrayList(optionNameMap.get(question.getKey()).values())));
+            //柱状图、折线图数据
+            List<Integer> yData = Lists.newArrayList();
+            //饼状图数据
+            List<NameValueBean> pieData = Lists.newArrayList();
+            //图例
+            List<String> legendData = Lists.newArrayList();
+            //总结果，用于计算饼图百分比
+            AtomicInteger total = new AtomicInteger();
+            //饼状图colorList
+            List<String> pieColor = Lists.newArrayList();
+            optionNameMap.get(question.getKey()).forEach((optionId, optionName) -> {
+                int data = question.getValue().containsKey(optionId)
+                        ? question.getValue().get(optionId).size()
+                        : 0;
+                total.addAndGet(data);
+                yData.add(data);
+                pieData.add(new NameValueBean(optionName, data));
+                pieColor.add(COLOR_LIST.get(pieData.size() % COLOR_LIST.size()));
+                legendData.add(optionName);
+            });
+            //柱状图、折线无图例
+            echartsBarOption.setLegend(new Data());
+            //y坐标也不设置
+            echartsBarOption.setyAxis(new Data());
+            //标题
+            echartsBarOption.setTitle(new OptionTitle(questionNameMap.get(question.getKey()), "", "center", "top"));
+            //hover效果
+            echartsBarOption.setTooltip(new EchartsOptionHover("axis", null));
+            //柱状图、折线图颜色
+            echartsBarOption.setColor(Lists.newArrayList(COLOR_LIST.get(0)));
+
+            pieData.forEach(o -> {
+                double percent = ((double) o.getValue() / total.get()) * 100;
+                String percentStr = Math.floor(percent) + "%";
+                o.setName(String.format("%s:(%s)", o.getName(), percentStr));
+
+            });
+            echartsBarOption.setSeries(Lists.newArrayList(new EchartsSeries("", "bar", 30, yData)
+                    ));
+            echartsBarOption.setFormType("bar");
+            result.add(echartsBarOption);
+            pieResult.add(new EchartsPieOption(echartsBarOption.getQuestionId(), echartsBarOption.getQuestionName(), "pie",
+                    echartsBarOption.getTitle(), new Data(legendData),
+                    Lists.newArrayList(new EchartsPieSeries("", "pie", pieData)),
+                    new EchartsOptionHover("item", "{b}:{c}"),
+                    pieColor));
+        });
+        return new WenjuanResult(result, pieResult);
     }
 }
 

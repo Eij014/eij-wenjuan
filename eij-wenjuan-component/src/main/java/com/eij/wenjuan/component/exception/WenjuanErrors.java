@@ -9,6 +9,7 @@ public enum WenjuanErrors implements ErrorCode {
     OPERATION_FAIL(12, "操作失败"),
     NOT_FOUND(13, "不存在"),
     EXIST_ALREADY(14, "已存在"),
+    PARSE_ERROR(15, "转换失败")
     ;
 
     private final int code;

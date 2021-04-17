@@ -21,7 +21,7 @@ import com.eij.wenjuan.component.exception.WenjuanErrors;
 import com.eij.wenjuan.component.service.UserService;
 
 /**
- * @author Zhu Haojie<eij00014@gmail.com>
+ * @author Eij<eij00014@gmail.com>
  * Created on 2021-03-13
  */
 @Service

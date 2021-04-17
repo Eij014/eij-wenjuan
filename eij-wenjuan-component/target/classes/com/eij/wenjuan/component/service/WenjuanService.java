@@ -1,13 +1,13 @@
 package com.eij.wenjuan.component.service;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.List;
 
+import com.eij.wenjuan.component.bean.OpenApi.AmapResponse;
 import com.eij.wenjuan.component.bean.VO.QuestionVO;
 import com.eij.wenjuan.component.bean.VO.WenjuanDetailVO;
 import com.eij.wenjuan.component.bean.VO.WenjuanVO;
 import com.eij.wenjuan.component.bean.request.AnswerRequest;
+import com.eij.wenjuan.component.bean.result.WenjuanResult;
 import com.eij.wenjuan.component.bean.sys.SearchPaging;
 
 /**
@@ -27,5 +27,7 @@ public interface WenjuanService {
 
     int answer(int wenjuanId, List<AnswerRequest> answerRequestList);
 
-    Object getAddress(String ip);
+    AmapResponse getAddress(String ip);
+
+    WenjuanResult getWenjuanResult(int wenjuanId);
 }

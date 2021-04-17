@@ -1,7 +1,7 @@
 package com.eij.wenjuan.api.request;
 
 /**
- * @author Zhu Haojie<eij00014@gmail.com>
+ * @author Eij<eij00014@gmail.com>
  * Created on 2021-03-13
  */
 public class UserLoginRequest {
