@@ -1,5 +1,9 @@
 package com.eij.wenjuan.component.service.impl;
 
+import static com.eij.wenjuan.component.utils.TimeUtils.DAY_SECONDS;
+import static com.eij.wenjuan.component.utils.TimeUtils.DAY_SHORT_FORMAT;
+
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -8,12 +12,15 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.eij.wenjuan.component.bean.Data;
 import com.eij.wenjuan.component.bean.VO.RecycleVO;
 import com.eij.wenjuan.component.bean.entity.Recycle;
+import com.eij.wenjuan.component.bean.entity.Result;
 import com.eij.wenjuan.component.bean.result.ChinaMapData;
 import com.eij.wenjuan.component.bean.result.City;
 import com.eij.wenjuan.component.bean.result.EchartsBarOption;
@@ -23,6 +30,8 @@ import com.eij.wenjuan.component.bean.result.OptionTitle;
 import com.eij.wenjuan.component.bean.result.RecycleProcessResponse;
 import com.eij.wenjuan.component.dao.RecycleDao;
 import com.eij.wenjuan.component.service.RecycleService;
+import com.eij.wenjuan.component.service.WenjuanBrowseService;
+import com.eij.wenjuan.component.utils.TimeUtils;
 import com.google.common.collect.Lists;
 
 /**
@@ -31,6 +40,8 @@ import com.google.common.collect.Lists;
  */
 @Service
 public class RecycleServiceImpl implements RecycleService {
+
+    private static final Logger logger = LoggerFactory.getLogger(RecycleServiceImpl.class);
 
     private static final List<String> PROVINCE_CAPITAL = new ArrayList<String>() {{
         add("北京");
@@ -80,6 +91,9 @@ public class RecycleServiceImpl implements RecycleService {
     @Autowired
     private RecycleDao recycleDao;
 
+    @Autowired
+    private WenjuanBrowseService wenjuanBrowseService;
+
     @Override
     public int insert(Recycle recycle) {
         return recycleDao.insert(recycle);
@@ -104,7 +118,7 @@ public class RecycleServiceImpl implements RecycleService {
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (v1, v2) -> v1, LinkedHashMap::new));
         //回收曲线图
         EchartsBarOption echartsBarOption = new EchartsBarOption();
-        echartsBarOption.setTitle(new OptionTitle("回收情况"));
+        echartsBarOption.setTitle(new OptionTitle("回收情况", "", "center", "top"));
         echartsBarOption.setyAxis(new Data());
         echartsBarOption.setxAxis(new Data(Lists.newArrayList(timeMap.keySet())));
         echartsBarOption.setLegend(new Data());
@@ -141,7 +155,87 @@ public class RecycleServiceImpl implements RecycleService {
                     : cityList);
             chinaMapDataList.add(chinaMapData);
         });
+        //回收曝光量
+        int wenjuanRecycleBrowse = wenjuanBrowseService.getWenjuanBrowseCount(wenjuanId);
+        //回收量
+        int recycleCount = recycleVOList.size();
+        //回收率
+        double recoveryRate = recycleCount == 0
+                ? 0.0
+                : ((double) recycleCount / wenjuanRecycleBrowse) * 100;
+        RecycleProcessResponse recycleProcessResponse =  new RecycleProcessResponse(chinaMapDataList, Lists.newArrayList(echartsBarOption),
+                                          wenjuanRecycleBrowse, recycleCount, (int) Math.floor(recoveryRate));
+        return getRecycleRadio(recycleVOList, recycleProcessResponse);
+    }
 
-        return new RecycleProcessResponse(chinaMapDataList, Lists.newArrayList(echartsBarOption));
+    /**
+     * 环比
+     */
+
+    private RecycleProcessResponse getRecycleRadio(List<RecycleVO> recycleVOList, RecycleProcessResponse recycleProcessResponse) {
+        try {
+            //日环比 (今日收集 - 昨日收集) / 昨日收集
+            //1.今日收集量
+            int todayRecycleCount = recycleVOList.stream().filter(o -> {
+                try {
+                    return o.getRecycleTime().equals(TimeUtils.timestamp2str(TimeUtils.getTimestamp(), DAY_SHORT_FORMAT));
+                } catch (ParseException e) {
+                    return false;
+                }
+            }).collect(Collectors.toList()).size();
+            //2.昨日收集量
+
+            int yesterdayRecycleCount = recycleVOList.stream().filter(o -> {
+                try {
+                    return o.getRecycleTime().equals(TimeUtils.timestamp2str(
+                            TimeUtils.getTimestamp() - DAY_SECONDS, DAY_SHORT_FORMAT));
+                } catch (ParseException e) {
+                    return false;
+                }
+            }).collect(Collectors.toList()).size();
+            double dayRatio = yesterdayRecycleCount == 0
+                    ? 100
+                    : (((double) (todayRecycleCount - yesterdayRecycleCount)) / yesterdayRecycleCount) * 100;
+            //周环比 (本周收集 - 上周收集) / 上周收集
+            //1.本周第一天、上周第一天
+            long thisWeekFirstDay = TimeUtils.getWeekFirstDay(System.currentTimeMillis());
+            long preWeekFirstDay = thisWeekFirstDay - 7 * DAY_SECONDS;
+            //2.本周收集量
+            int thisWeekRecycleCount = recycleVOList.stream().filter(o -> {
+                return o.getCreateTime() >= thisWeekFirstDay;
+            }).collect(Collectors.toList()).size();
+            //3.上周收集量
+            int preWeekRecycleCount = recycleVOList.stream().filter(o -> {
+                return o.getCreateTime() >= preWeekFirstDay
+                        && o.getCreateTime() < thisWeekFirstDay;
+            }).collect(Collectors.toList()).size();
+            double weekRatio = preWeekRecycleCount == 0
+                    ? 100
+                    : (((double) (thisWeekRecycleCount - preWeekRecycleCount)) / preWeekRecycleCount) * 100;
+            //月环比 (本月收集 - 上月收集) / 上月收集
+            //1.本月第一天、上月第一天
+            long firstDayOfMonth = TimeUtils.getMonthFirstDay(System.currentTimeMillis());
+            long firstDayOfPreMonth = TimeUtils.getMonthFirstDay(firstDayOfMonth * 1000 - 1);
+            //2.本月收集量
+            int thisMonthRecycleCount = recycleVOList.stream().filter(o -> {
+                return o.getCreateTime() >= firstDayOfMonth;
+            }).collect(Collectors.toList()).size();
+            //3.上月收集量
+            int preMonthRecycleCount = recycleVOList.stream().filter(o -> {
+                return o.getCreateTime() >= firstDayOfPreMonth
+                        && o.getCreateTime() < firstDayOfMonth;
+            }).collect(Collectors.toList()).size();
+            double monthRatio = preMonthRecycleCount == 0
+                    ? 100
+                    : (((double) (thisMonthRecycleCount - preMonthRecycleCount)) / preMonthRecycleCount) * 100;
+
+            recycleProcessResponse.setDayRatio((int) Math.floor(dayRatio));
+            recycleProcessResponse.setWeekRatio((int) Math.floor(weekRatio));
+            recycleProcessResponse.setMonthRatio((int) Math.floor(monthRatio));
+            return recycleProcessResponse;
+        } catch (ParseException e) {
+            logger.error("time parse error", e.getMessage());
+            return recycleProcessResponse;
+        }
     }
 }

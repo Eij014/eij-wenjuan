@@ -2,6 +2,7 @@ package com.eij.wenjuan.component.service;
 
 import java.util.List;
 
+import com.eij.wenjuan.component.bean.VO.CrossAnalysisVO;
 import com.eij.wenjuan.component.bean.VO.ResultVO;
 import com.eij.wenjuan.component.bean.entity.Result;
 
@@ -14,4 +15,6 @@ public interface ResultService {
     int[] batchInsert(List<Result> resultList);
 
     List<ResultVO> getByWenjuanId(int wenjuanId);
+
+    List<CrossAnalysisVO> getCrossAnalysis(int wenjuanId, List<Integer> questionIdXList, List<Integer> questionIdYList);
 }

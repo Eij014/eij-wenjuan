@@ -59,7 +59,7 @@ public class OptionDao extends AbstractDao {
     public List<Option> selectByQuestionIds(List<Integer> questionIdList) {
         MapSqlParameterSource source = new MapSqlParameterSource();
         source.addValue("questionIdList", questionIdList);
-        return getReader().query(SQL_SELECT_BY_QUESTION_IDS, source, ROW_MAPPER);
+        return getReader().query(SQL_SELECT_BY_QUESTION_IDS + ORDER, source, ROW_MAPPER);
     }
 
     public void batchUpdate(List<Option> optionList) {

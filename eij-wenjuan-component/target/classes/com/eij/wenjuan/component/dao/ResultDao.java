@@ -25,9 +25,9 @@ public class ResultDao  extends AbstractDao {
     private static final String TABLE_NAME = "`result`";
 
     private static final String SQL_INSERT = "insert into " + TABLE_NAME
-            + " (`wenjuan_id`,`question_id`,`option_id`,`type`,`text`,`create_time`,`province`,`city`)"
+            + " (`wenjuan_id`,`question_id`,`option_id`,`type`,`text`,`create_time`,`province`,`city`,`uuid`)"
             + " values"
-            + " (:wenjuanId,:questionId,:optionId,:type,:text,:createTime,:province, :city)";
+            + " (:wenjuanId,:questionId,:optionId,:type,:text,:createTime,:province, :city,:uuid)";
 
     private static final String SQL_SELECT = "select t1.*,t2.option_name from " + TABLE_NAME
             + " t1 left join `option` t2 on t1.option_id = t2.option_id"
@@ -49,6 +49,7 @@ public class ResultDao  extends AbstractDao {
         resultVO.setType(rs.getString("type"));
         resultVO.setProvince(rs.getString("province"));
         resultVO.setCity(rs.getString("city"));
+        resultVO.setUuid(rs.getString("uuid"));
         return resultVO;
     };
 
@@ -65,6 +66,7 @@ public class ResultDao  extends AbstractDao {
                     source.addValue("province", result.getProvince());
                     source.addValue("city", result.getCity());
                     source.addValue("createTime", System.currentTimeMillis() / 1000);
+                    source.addValue("uuid", result.getUuid());
                     return source;
                 })
                 .toArray(MapSqlParameterSource[]::new);

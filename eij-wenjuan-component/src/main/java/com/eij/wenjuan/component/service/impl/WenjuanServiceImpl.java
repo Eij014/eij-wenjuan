@@ -47,6 +47,7 @@ import com.eij.wenjuan.component.service.OptionService;
 import com.eij.wenjuan.component.service.QuestionService;
 import com.eij.wenjuan.component.service.RecycleService;
 import com.eij.wenjuan.component.service.ResultService;
+import com.eij.wenjuan.component.service.WenjuanBrowseService;
 import com.eij.wenjuan.component.service.WenjuanService;
 import com.eij.wenjuan.component.utils.ObjectMapperUtils;
 import com.eij.wenjuan.component.utils.web.LoginUserContext;
@@ -88,6 +89,19 @@ public class WenjuanServiceImpl implements WenjuanService {
        add("#FFE4B5");
     }};
 
+    private static final List<String> IP_TEST_LIST = new ArrayList<String>() {{
+        add("192.167.127.1");
+        add("192.167.127.2");
+        add("192.167.127.3");
+        add("192.167.127.4");
+        add("192.167.127.5");
+        add("192.167.127.6");
+        add("192.167.127.7");
+        add("192.167.127.8");
+        add("192.167.127.9");
+        add("192.167.127.10");
+    }};
+
     @Autowired
     private WenjuanDao wenjuanDao;
 
@@ -102,6 +116,9 @@ public class WenjuanServiceImpl implements WenjuanService {
 
     @Autowired
     private RecycleService recycleService;
+
+    @Autowired
+    private WenjuanBrowseService wenjuanBrowseService;
 
     @Override
     public WenjuanVO getWenjuanList(SearchPaging searchPaging) {
@@ -124,7 +141,7 @@ public class WenjuanServiceImpl implements WenjuanService {
         return wenjuanVO;
     }
     @Override
-    public WenjuanDetailVO getWenjuanDetail(int wenjuanId) {
+    public WenjuanDetailVO getWenjuanDetail(int wenjuanId, String type) {
 
         Wenjuan wenjuan = wenjuanDao.selectByWenjuanId(wenjuanId);
         WenjuanDetailVO wenjuanDetailVO = new WenjuanDetailVO(wenjuan);
@@ -150,12 +167,25 @@ public class WenjuanServiceImpl implements WenjuanService {
         });
 
         wenjuanDetailVO.setQuestionVOList(questionVOList);
+        //回收曝光
+        if (type.equals("recycle")) {
+            wenjuanBrowseService.insert(wenjuanId);
+        }
         return wenjuanDetailVO;
     }
 
     @Override
     public void createOrUpdateWenjuan(int wenjuanId, String imgUrl, String wenjuanTitle, String welcomeMsg, List<QuestionVO> questionVOList) {
         String userName = LoginUserContext.getUserName();
+        //question和option设置index
+        AtomicInteger questionIndex = new AtomicInteger(0);
+        AtomicInteger optionIndex = new AtomicInteger();
+        questionVOList.forEach(questionVO -> {
+            questionVO.setQuestionIndex(questionIndex.getAndIncrement());
+            questionVO.getOptionList().forEach(option -> {
+                option.setOptionIndex(optionIndex.getAndIncrement());
+            });
+        });
         if (wenjuanId != 0) {
 
             //更新问卷
@@ -190,6 +220,16 @@ public class WenjuanServiceImpl implements WenjuanService {
                         insert(new Wenjuan(wenjuanTitle, welcomeMsg, userName, 0, 0, imgUrl));
             createQuestion(wenjuanId, questionVOList);
         }
+    }
+
+    @Override
+    public int deleteByWenjuanId(int wenjuanId) {
+        List<Integer> questionIdList = questionService.getByWenjuanId(wenjuanId)
+                .stream().map(Question::getQuestionId)
+                .collect(Collectors.toList());
+        optionService.deleteByQuestionIds(questionIdList);
+        questionService.deleteByIds(questionIdList);
+        return wenjuanDao.delete(wenjuanId);
     }
 
     @Override
@@ -258,7 +298,11 @@ public class WenjuanServiceImpl implements WenjuanService {
     public int answer(int wenjuanId, List<AnswerRequest> answerRequestList) {
         List<Result> resultList = Lists.newArrayList();
         String ip = LoginUserContext.getUserContext().getIp();
-        AmapResponse  amapResponse = getAddress(ip);
+        String uuip = IP_TEST_LIST.get(new Random().nextInt(11)) + System.currentTimeMillis();
+//        AmapResponse  amapResponse = getAddress(ip);
+        AmapResponse amapResponse = new AmapResponse();
+        amapResponse.setProvince("山东省");
+        amapResponse.setCity("青岛市");
         String province = StringUtils.isNotEmpty(amapResponse.getProvince())
                 ? amapResponse.getProvince().replace("市", "").replace("省", "")
                   .replace("维吾尔族自治区", "").replace("壮族自治区", "")
@@ -281,14 +325,14 @@ public class WenjuanServiceImpl implements WenjuanService {
                 case VIDEO:
                     o.getValue().forEach(answer -> {
                         resultList.add(new Result(wenjuanId, answer.getQuestionId(),
-                                answer.getOptionId(), "", questionType.getNameCamel(), province, city));
+                                answer.getOptionId(), "", questionType.getNameCamel(), province, city, uuip));
                     });
                     break;
                 case MULTIPLE_CHOICE:
                     o.getValue().forEach(answer -> {
                         resultList.addAll(answer.getOptionIdList().stream().map(optionId -> {
                                 return new Result(wenjuanId, answer.getQuestionId(),
-                                        optionId, "", questionType.getNameCamel(), province, city);
+                                        optionId, "", questionType.getNameCamel(), province, city, uuip);
                         }).collect(Collectors.toList()));
                     });
                     break;
@@ -296,6 +340,7 @@ public class WenjuanServiceImpl implements WenjuanService {
                     break;
             }
         });
+
         recycleService.insert(new Recycle(wenjuanId, province, city));
         resultService.batchInsert(resultList);
         return resultList.size();

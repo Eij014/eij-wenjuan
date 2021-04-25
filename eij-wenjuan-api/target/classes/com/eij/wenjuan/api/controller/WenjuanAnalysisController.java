@@ -1,12 +1,18 @@
 package com.eij.wenjuan.api.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.eij.wenjuan.api.response.WenjuanResponseMessage;
+import com.eij.wenjuan.component.bean.VO.CrossAnalysisVO;
+import com.eij.wenjuan.component.bean.request.CrossAnalysisRequest;
 import com.eij.wenjuan.component.bean.result.RecycleProcessResponse;
 import com.eij.wenjuan.component.bean.result.WenjuanResult;
 import com.eij.wenjuan.component.service.RecycleService;
@@ -37,6 +43,13 @@ public class WenjuanAnalysisController {
     @GetMapping("/get/recycle/process")
     public WenjuanResponseMessage<RecycleProcessResponse> getWenjuanRecycleProcess(@RequestParam("wenjuanId") int wenjuanId) {
         return WenjuanResponseMessage.success(recycleService.getWenjuanRecycleProcess(wenjuanId));
+    }
+
+    @PostMapping("/get/cross/analysis")
+    public WenjuanResponseMessage<List<CrossAnalysisVO>> getCrossAnalysis(@RequestBody CrossAnalysisRequest crossAnalysisRequest) {
+        return WenjuanResponseMessage.success(resultService.getCrossAnalysis(crossAnalysisRequest.getWenjuanId(),
+                crossAnalysisRequest.getQuestionIdXList(), crossAnalysisRequest.getQuestionIdYList()));
+
     }
 
 }

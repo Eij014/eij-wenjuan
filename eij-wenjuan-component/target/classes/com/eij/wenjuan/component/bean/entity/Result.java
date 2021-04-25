@@ -23,10 +23,14 @@ public class Result {
 
     private String city;
 
+    private String uuid;
+
     public Result() {
     }
 
-    public Result(Integer wenjuanId, Integer questionId, Integer optionId, String text, String type, String province, String city) {
+    @SuppressWarnings("ParameterNumber")
+    public Result(Integer wenjuanId, Integer questionId, Integer optionId, String text,
+                  String type, String province, String city, String uuid) {
         this.wenjuanId = wenjuanId;
         this.questionId = questionId;
         this.optionId = optionId;
@@ -34,6 +38,7 @@ public class Result {
         this.type = type;
         this.province = province;
         this.city = city;
+        this.uuid = uuid;
     }
 
     public Integer getId() {
@@ -106,5 +111,13 @@ public class Result {
 
     public void setCity(String city) {
         this.city = city;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 }

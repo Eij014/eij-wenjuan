@@ -37,6 +37,9 @@ public class WenjuanDao extends AbstractDao {
     private static final String SQL_SELECT = "select * from " + TABLE_NAME
             + " where committer = :committer";
 
+    private static final String SQL_DELETE = "delete from " + TABLE_NAME
+            + " where wenjuan_id = :wenjuanId";
+
     private static final String SQL_UPDATE = "update " + TABLE_NAME
             + " set `wenjuan_title` = :wenjuanTitle, `welcome_msg` = :welcomeMsg"
             + " where `wenjuan_id` = :wenjuanId";
@@ -65,6 +68,12 @@ public class WenjuanDao extends AbstractDao {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         getWriter().update(SQL_INSERT, source, keyHolder);
         return Objects.requireNonNull(keyHolder.getKey()).intValue();
+    }
+
+    public int delete(int wenjuanId) {
+        MapSqlParameterSource source = new MapSqlParameterSource();
+        source.addValue("wenjuanId", wenjuanId);
+        return getWriter().update(SQL_DELETE, source);
     }
 
     public List<Wenjuan> selectByUserName(String committer, int limit, int offset) {

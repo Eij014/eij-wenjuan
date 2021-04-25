@@ -17,9 +17,11 @@ import com.eij.wenjuan.component.bean.sys.SearchPaging;
 public interface WenjuanService {
     WenjuanVO getWenjuanList(SearchPaging searchPaging);
 
-    WenjuanDetailVO getWenjuanDetail(int wenjuanId);
+    WenjuanDetailVO getWenjuanDetail(int wenjuanId, String type);
 
     void createOrUpdateWenjuan(int wenjuanId, String imgUrl, String wenjuanTitle, String welcomeMsg, List<QuestionVO> questionVOList);
+
+    int deleteByWenjuanId(int wenjuanId);
 
     String getInitImgUrs();
 

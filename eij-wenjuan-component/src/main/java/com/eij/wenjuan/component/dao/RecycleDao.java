@@ -1,5 +1,7 @@
 package com.eij.wenjuan.component.dao;
 
+import static com.eij.wenjuan.component.utils.TimeUtils.DAY_SHORT_FORMAT;
+
 import java.text.ParseException;
 import java.util.List;
 
@@ -34,8 +36,6 @@ public class RecycleDao extends AbstractDao {
     private static final String SQL_SELECT = "select * from " + TABLE_NAME
             + " where wenjuan_id = :wenjuanId";
 
-    public static final String DAY_SHORT_FORMAT = "yyyy-MM-dd";
-
     private static final RowMapper<RecycleVO> ROW_MAPPER = (rs, rowNum) -> {
         RecycleVO recycleVO = new RecycleVO();
         recycleVO.setId(rs.getInt("id"));
@@ -57,6 +57,7 @@ public class RecycleDao extends AbstractDao {
         MapSqlParameterSource source = new MapSqlParameterSource();
         source.addValue("wenjuanId", recycle.getWenjuanId());
         source.addValue("province", recycle.getProvince());
+        source.addValue("city", recycle.getCity());
         source.addValue("createTime", TimeUtils.getTimestamp());
         return getWriter().update(SQL_INSERT, source);
     }

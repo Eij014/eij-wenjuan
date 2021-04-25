@@ -23,8 +23,10 @@ import com.eij.wenjuan.component.bean.Image;
 import com.eij.wenjuan.component.bean.OpenApi.AmapResponse;
 import com.eij.wenjuan.component.bean.VO.WenjuanDetailVO;
 import com.eij.wenjuan.component.bean.VO.WenjuanVO;
+import com.eij.wenjuan.component.bean.entity.Question;
 import com.eij.wenjuan.component.bean.sys.SearchPaging;
 import com.eij.wenjuan.component.service.ImageUploadService;
+import com.eij.wenjuan.component.service.QuestionService;
 import com.eij.wenjuan.component.service.WenjuanService;
 
 /**
@@ -32,7 +34,7 @@ import com.eij.wenjuan.component.service.WenjuanService;
  * Created on 2021-02-05
  */
 @RestController
-@RequestMapping(path = {"/wenjuan/"})
+@RequestMapping(path = {"/wenjuan"})
 public class WenjuanController {
 
     private static final Logger logger = LoggerFactory.getLogger(WenjuanController.class);
@@ -42,6 +44,9 @@ public class WenjuanController {
 
     @Autowired
     private WenjuanService wenjuanService;
+
+    @Autowired
+    private QuestionService questionService;
 
     @PostMapping("/upload/image")
     public WenjuanResponseMessage<String> upload(@RequestParam("multipartFile") MultipartFile multipartFile) throws IOException {
@@ -74,10 +79,15 @@ public class WenjuanController {
         return WenjuanResponseMessage.success("保存成功", 1);
     }
 
+    @GetMapping("/delete")
+    public WenjuanResponseMessage<Integer> deleteWenjuan(@RequestParam("wenjuanId") int wenjuanId) {
+        return WenjuanResponseMessage.success(wenjuanService.deleteByWenjuanId(wenjuanId));
+    }
 
     @GetMapping("/detail")
-    public WenjuanResponseMessage<WenjuanDetailVO> getWenjuanDetail(@RequestParam("wenjuanId") int wenjuanId) {
-        return WenjuanResponseMessage.success(wenjuanService.getWenjuanDetail(wenjuanId));
+    public WenjuanResponseMessage<WenjuanDetailVO> getWenjuanDetail(@RequestParam("wenjuanId") int wenjuanId,
+                                                                    @RequestParam("type") String type) {
+        return WenjuanResponseMessage.success(wenjuanService.getWenjuanDetail(wenjuanId, type));
     }
 
     @GetMapping("/init/img/url")
@@ -99,4 +109,10 @@ public class WenjuanController {
     public WenjuanResponseMessage<AmapResponse> getAddress(@RequestParam("ip") String ip) {
         return WenjuanResponseMessage.success(wenjuanService.getAddress(ip));
     }
+
+    @GetMapping("/get/question")
+    public WenjuanResponseMessage<List<Question>> getQuestion(@RequestParam("wenjuanId") int wenjuanId) {
+        return WenjuanResponseMessage.success(questionService.getByWenjuanId(wenjuanId));
+    }
+
 }
