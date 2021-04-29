@@ -1,6 +1,8 @@
+D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\bean\entity\WenjuanFolder.java
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\contants\ResponseCode.java
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\dao\QuestionDao.java
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\contants\DataSourceType.java
+D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\service\impl\WenjuanFolderRelationServiceImpl.java
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\service\OptionService.java
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\service\RecycleService.java
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\service\ResultService.java
@@ -14,8 +16,10 @@ D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenj
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\bean\VO\WenjuanVO.java
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\bean\request\SearchRequest.java
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\bean\result\RecycleProcessResponse.java
+D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\service\WenjuanFolderService.java
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\bean\result\EchartsSeries.java
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\service\blobStore\impl\BlobStoreServiceImpl.java
+D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\bean\result\WenjuanRequest.java
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\bean\result\City.java
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\bean\VO\RecycleVO.java
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\dao\UserDao.java
@@ -26,6 +30,7 @@ D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenj
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\bean\entity\Question.java
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\utils\EventSource.java
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\bean\sys\SearchPaging.java
+D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\bean\entity\WenjuanFolderRelation.java
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\bean\entity\Result.java
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\bean\result\OptionTitle.java
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\bean\result\EchartsPieSeries.java
@@ -34,7 +39,9 @@ D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenj
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\bean\VO\ResultVO.java
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\service\impl\ResultServiceImpl.java
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\bean\result\EchartsOptionHover.java
+D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\dao\WenjuanFolderDao.java
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\bean\result\ChinaMapData.java
+D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\dao\WenjuanFolderRelationDao.java
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\service\UserService.java
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\exception\ErrorCode.java
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\bean\VO\QuestionVO.java
@@ -47,13 +54,16 @@ D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenj
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\dao\ImageDao.java
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\bean\view\WenjuanResponseView.java
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\bean\entity\Wenjuan.java
+D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\bean\VO\WenjuanFolderVO.java
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\service\WenjuanBrowseService.java
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\utils\ConfigAdaptor.java
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\bean\request\CrossAnalysisRequest.java
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\service\impl\WenjuanBrowseServiceImpl.java
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\bean\VO\CrossAnalysisVO.java
+D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\service\impl\WenjuanFolderServiceImpl.java
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\utils\ObjectMapperUtils.java
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\bean\result\EchartsPieOption.java
+D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\bean\VO\WenjuanVOList.java
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\dao\AbstractDao.java
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\service\impl\QuestionServiceImpl.java
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\service\impl\OptionServiceImpl.java
@@ -66,6 +76,7 @@ D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenj
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\dao\RecycleDao.java
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\bean\entity\Option.java
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\bean\entity\WenjuanBrowse.java
+D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\service\WenjuanFolderRelationService.java
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\dao\WenjuanBrowseDao.java
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\bean\request\AnswerRequest.java
 D:\毕业设计\Project\eij-wenjuan\eij-wenjuan-component\src\main\java\com\eij\wenjuan\component\service\blobStore\BlobStoreService.java

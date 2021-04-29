@@ -22,9 +22,9 @@ import com.eij.wenjuan.api.response.WenjuanResponseMessage;
 import com.eij.wenjuan.component.bean.Image;
 import com.eij.wenjuan.component.bean.OpenApi.AmapResponse;
 import com.eij.wenjuan.component.bean.VO.WenjuanDetailVO;
-import com.eij.wenjuan.component.bean.VO.WenjuanVO;
+import com.eij.wenjuan.component.bean.VO.WenjuanVOList;
 import com.eij.wenjuan.component.bean.entity.Question;
-import com.eij.wenjuan.component.bean.sys.SearchPaging;
+import com.eij.wenjuan.component.bean.result.WenjuanRequest;
 import com.eij.wenjuan.component.service.ImageUploadService;
 import com.eij.wenjuan.component.service.QuestionService;
 import com.eij.wenjuan.component.service.WenjuanService;
@@ -63,9 +63,9 @@ public class WenjuanController {
 
 
     @PostMapping("/list")
-    public WenjuanResponseMessage<WenjuanVO> getWenjuanList(@RequestBody SearchPaging searchPaging) {
+    public WenjuanResponseMessage<WenjuanVOList> getWenjuanList(@RequestBody WenjuanRequest wenjuanRequest) {
         int a = 1;
-        return WenjuanResponseMessage.success(wenjuanService.getWenjuanList(searchPaging));
+        return WenjuanResponseMessage.success(wenjuanService.getWenjuanList(wenjuanRequest));
     }
 
     @PostMapping("/create/update")
@@ -74,6 +74,7 @@ public class WenjuanController {
                 .createOrUpdateWenjuan(wenjuanEditRequest.getWenjuanId(),
                         wenjuanEditRequest.getImgUrl(),
                         wenjuanEditRequest.getWenjuanTitle(),
+                        wenjuanEditRequest.getFolderId(),
                         wenjuanEditRequest.getWelcomeMsg(),
                         wenjuanEditRequest.getQuestionVOList());
         return WenjuanResponseMessage.success("保存成功", 1);

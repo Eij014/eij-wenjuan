@@ -18,6 +18,17 @@ public class Wenjuan {
     public Wenjuan() {
     }
 
+    public Wenjuan(Wenjuan wenjuan) {
+        this.wenjuanId = wenjuan.getWenjuanId();
+        this.wenjuanTitle = wenjuan.getWenjuanTitle();
+        this.welcomeMsg = wenjuan.getWelcomeMsg();
+        this.committer = wenjuan.getCommitter();
+        this.type = wenjuan.getType();
+        this.status = wenjuan.getStatus();
+        this.imgUrl = wenjuan.getImgUrl();
+        this.createTime = wenjuan.getCreateTime();
+    }
+
     public Wenjuan(String wenjuanTitle, String welcomeMsg, String committer, int type, int status, String imgUrl) {
         this.wenjuanTitle = wenjuanTitle;
         this.welcomeMsg = welcomeMsg;

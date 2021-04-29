@@ -36,6 +36,10 @@ public class RecycleDao extends AbstractDao {
     private static final String SQL_SELECT = "select * from " + TABLE_NAME
             + " where wenjuan_id = :wenjuanId";
 
+    private static final String SQL_SELECT_BY_IDS = "select * from " + TABLE_NAME
+            + " where wenjuan_id in (:wenjuanIdList)";
+
+
     private static final RowMapper<RecycleVO> ROW_MAPPER = (rs, rowNum) -> {
         RecycleVO recycleVO = new RecycleVO();
         recycleVO.setId(rs.getInt("id"));
@@ -68,4 +72,9 @@ public class RecycleDao extends AbstractDao {
         return getReader().query(SQL_SELECT, source, ROW_MAPPER);
     }
 
+    public List<RecycleVO> selectByWenjuanIds(List<Integer> wenjuanIdList) {
+        MapSqlParameterSource source = new MapSqlParameterSource();
+        source.addValue("wenjuanIdList", wenjuanIdList);
+        return getReader().query(SQL_SELECT_BY_IDS, source, ROW_MAPPER);
+    }
 }

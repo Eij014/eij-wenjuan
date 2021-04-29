@@ -24,14 +24,17 @@ import com.eij.wenjuan.component.bean.Data;
 import com.eij.wenjuan.component.bean.NameValueBean;
 import com.eij.wenjuan.component.bean.OpenApi.AmapResponse;
 import com.eij.wenjuan.component.bean.VO.QuestionVO;
+import com.eij.wenjuan.component.bean.VO.RecycleVO;
 import com.eij.wenjuan.component.bean.VO.ResultVO;
 import com.eij.wenjuan.component.bean.VO.WenjuanDetailVO;
 import com.eij.wenjuan.component.bean.VO.WenjuanVO;
+import com.eij.wenjuan.component.bean.VO.WenjuanVOList;
 import com.eij.wenjuan.component.bean.entity.Option;
 import com.eij.wenjuan.component.bean.entity.Question;
 import com.eij.wenjuan.component.bean.entity.Recycle;
 import com.eij.wenjuan.component.bean.entity.Result;
 import com.eij.wenjuan.component.bean.entity.Wenjuan;
+import com.eij.wenjuan.component.bean.entity.WenjuanFolderRelation;
 import com.eij.wenjuan.component.bean.request.AnswerRequest;
 import com.eij.wenjuan.component.bean.result.EchartsBarOption;
 import com.eij.wenjuan.component.bean.result.EchartsOptionHover;
@@ -39,8 +42,8 @@ import com.eij.wenjuan.component.bean.result.EchartsPieOption;
 import com.eij.wenjuan.component.bean.result.EchartsPieSeries;
 import com.eij.wenjuan.component.bean.result.EchartsSeries;
 import com.eij.wenjuan.component.bean.result.OptionTitle;
+import com.eij.wenjuan.component.bean.result.WenjuanRequest;
 import com.eij.wenjuan.component.bean.result.WenjuanResult;
-import com.eij.wenjuan.component.bean.sys.SearchPaging;
 import com.eij.wenjuan.component.contants.QuestionType;
 import com.eij.wenjuan.component.dao.WenjuanDao;
 import com.eij.wenjuan.component.service.OptionService;
@@ -48,6 +51,7 @@ import com.eij.wenjuan.component.service.QuestionService;
 import com.eij.wenjuan.component.service.RecycleService;
 import com.eij.wenjuan.component.service.ResultService;
 import com.eij.wenjuan.component.service.WenjuanBrowseService;
+import com.eij.wenjuan.component.service.WenjuanFolderRelationService;
 import com.eij.wenjuan.component.service.WenjuanService;
 import com.eij.wenjuan.component.utils.ObjectMapperUtils;
 import com.eij.wenjuan.component.utils.web.LoginUserContext;
@@ -120,25 +124,38 @@ public class WenjuanServiceImpl implements WenjuanService {
     @Autowired
     private WenjuanBrowseService wenjuanBrowseService;
 
-    @Override
-    public WenjuanVO getWenjuanList(SearchPaging searchPaging) {
-        String userName = LoginUserContext.getUserName();
-        WenjuanVO wenjuanVO = new WenjuanVO();
+    @Autowired
+    private WenjuanFolderRelationService wenjuanFolderRelationService;
 
-        wenjuanVO.setCurrentPage(searchPaging.getCurrentPage());
-        int limit = searchPaging.getPageSize();
-        int offset = (searchPaging.getCurrentPage() - 1) * searchPaging.getPageSize();
-        int total = wenjuanDao.selectTotalByUserName(userName);
+    @Override
+    public WenjuanVOList getWenjuanList(WenjuanRequest wenjuanRequest) {
+        String userName = LoginUserContext.getUserName();
+        WenjuanVOList wenjuanVOList = new WenjuanVOList();
+        List<Integer> wenjuanIdByCondition = getWenjuanIdsByCondition(userName, wenjuanRequest.getFolderId(), wenjuanRequest.getKeywords());
+        wenjuanVOList.setCurrentPage(wenjuanRequest.getCurrentPage());
+        int limit = wenjuanRequest.getPageSize();
+        int offset = (wenjuanRequest.getCurrentPage() - 1) * wenjuanRequest.getPageSize();
+        int total = wenjuanDao.selectTotalByUserName(userName, wenjuanIdByCondition);
         List<Wenjuan> wenjuanList
-                = wenjuanDao.selectByUserName(userName, limit, offset);
-        wenjuanVO.setWenjuanList(wenjuanList);
-        wenjuanVO.setTotal(total);
-        wenjuanVO.setPageSize(wenjuanList.size());
-        int totalPage = (total % searchPaging.getPageSize()) == 0
-                ? total / searchPaging.getPageSize()
-                : total / searchPaging.getPageSize() + 1;
-        wenjuanVO.setTotalPage(totalPage);
-        return wenjuanVO;
+                = wenjuanDao.selectByUserName(userName, wenjuanIdByCondition, limit, offset);
+        List<RecycleVO> recycleVOList =
+        recycleService.getByWenjuanIds(wenjuanList.stream().map(Wenjuan::getWenjuanId).collect(Collectors.toList()));
+        Map<Integer, List<RecycleVO>> wenjuanRecycleMap = recycleVOList
+                .stream()
+                .collect(Collectors.groupingBy(Recycle::getWenjuanId));
+        wenjuanVOList.setWenjuanList(wenjuanList.stream().map(o -> {
+            int wenjuanRecycleCount = wenjuanRecycleMap.containsKey(o.getWenjuanId())
+                    ? wenjuanRecycleMap.get(o.getWenjuanId()).size()
+                    : 0;
+            return new WenjuanVO(o, wenjuanRecycleCount);
+        }).collect(Collectors.toList()));
+        wenjuanVOList.setTotal(total);
+        wenjuanVOList.setPageSize(wenjuanList.size());
+        int totalPage = (total % wenjuanRequest.getPageSize()) == 0
+                ? total / wenjuanRequest.getPageSize()
+                : total / wenjuanRequest.getPageSize() + 1;
+        wenjuanVOList.setTotalPage(totalPage);
+        return wenjuanVOList;
     }
     @Override
     public WenjuanDetailVO getWenjuanDetail(int wenjuanId, String type) {
@@ -175,7 +192,8 @@ public class WenjuanServiceImpl implements WenjuanService {
     }
 
     @Override
-    public void createOrUpdateWenjuan(int wenjuanId, String imgUrl, String wenjuanTitle, String welcomeMsg, List<QuestionVO> questionVOList) {
+    public void createOrUpdateWenjuan(int wenjuanId, String imgUrl, String wenjuanTitle, int folderId,
+                                      String welcomeMsg, List<QuestionVO> questionVOList) {
         String userName = LoginUserContext.getUserName();
         //question和option设置index
         AtomicInteger questionIndex = new AtomicInteger(0);
@@ -189,7 +207,7 @@ public class WenjuanServiceImpl implements WenjuanService {
         if (wenjuanId != 0) {
 
             //更新问卷
-            wenjuanDao.updateWenjuan(wenjuanId, wenjuanTitle, welcomeMsg);
+            wenjuanDao.updateWenjuan(wenjuanId, imgUrl, wenjuanTitle, welcomeMsg);
             //问卷下原问题
             List<Integer> questionOldList = questionService.getByWenjuanId(wenjuanId)
                     .stream()
@@ -215,15 +233,22 @@ public class WenjuanServiceImpl implements WenjuanService {
                     .filter(o -> o.getQuestionId() == 0)
                     .collect(Collectors.toList());
             createQuestion(wenjuanId, questionNeedCreateList);
+
+
         } else {
             wenjuanId = wenjuanDao.
                         insert(new Wenjuan(wenjuanTitle, welcomeMsg, userName, 0, 0, imgUrl));
             createQuestion(wenjuanId, questionVOList);
+            //问卷和文件夹关联
+            if (folderId != 0) {
+                wenjuanFolderRelationService.insert(new WenjuanFolderRelation(wenjuanId, folderId));
+            }
         }
     }
 
     @Override
     public int deleteByWenjuanId(int wenjuanId) {
+        wenjuanFolderRelationService.delete(0, wenjuanId);
         List<Integer> questionIdList = questionService.getByWenjuanId(wenjuanId)
                 .stream().map(Question::getQuestionId)
                 .collect(Collectors.toList());
@@ -294,15 +319,22 @@ public class WenjuanServiceImpl implements WenjuanService {
                 }).collect(Collectors.toList());
     }
 
+    public static final List<String> TEST_CITY = new ArrayList<String>() {{
+        add("乌鲁木齐");
+        add("深圳");
+        add("佛山");
+        add("珠海");
+    }};
+
     @Override
     public int answer(int wenjuanId, List<AnswerRequest> answerRequestList) {
         List<Result> resultList = Lists.newArrayList();
         String ip = LoginUserContext.getUserContext().getIp();
-        String uuip = IP_TEST_LIST.get(new Random().nextInt(11)) + System.currentTimeMillis();
+        String uuip = IP_TEST_LIST.get(new Random().nextInt(10)) + System.currentTimeMillis();
 //        AmapResponse  amapResponse = getAddress(ip);
         AmapResponse amapResponse = new AmapResponse();
-        amapResponse.setProvince("山东省");
-        amapResponse.setCity("青岛市");
+        amapResponse.setProvince("新疆");
+        amapResponse.setCity(TEST_CITY.get(new Random().nextInt(4)));
         String province = StringUtils.isNotEmpty(amapResponse.getProvince())
                 ? amapResponse.getProvince().replace("市", "").replace("省", "")
                   .replace("维吾尔族自治区", "").replace("壮族自治区", "")
@@ -440,6 +472,10 @@ public class WenjuanServiceImpl implements WenjuanService {
                     pieColor));
         });
         return new WenjuanResult(result, pieResult);
+    }
+
+    private List<Integer> getWenjuanIdsByCondition(String username, int folderId, String keywords) {
+        return wenjuanDao.selectIdsByCondition(username, folderId, keywords);
     }
 }
 

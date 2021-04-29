@@ -15,6 +15,8 @@ public class WenjuanEditRequest {
 
     private String welcomeMsg;
 
+    private int folderId;
+
     private String imgUrl;
 
     private List<QuestionVO> questionVOList;
@@ -49,6 +51,14 @@ public class WenjuanEditRequest {
 
     public void setWelcomeMsg(String welcomeMsg) {
         this.welcomeMsg = welcomeMsg;
+    }
+
+    public int getFolderId() {
+        return folderId;
+    }
+
+    public void setFolderId(int folderId) {
+        this.folderId = folderId;
     }
 
     public String getImgUrl() {

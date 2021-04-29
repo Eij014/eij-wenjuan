@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,6 @@ import org.springframework.stereotype.Service;
 import com.eij.wenjuan.component.bean.Data;
 import com.eij.wenjuan.component.bean.VO.RecycleVO;
 import com.eij.wenjuan.component.bean.entity.Recycle;
-import com.eij.wenjuan.component.bean.entity.Result;
 import com.eij.wenjuan.component.bean.result.ChinaMapData;
 import com.eij.wenjuan.component.bean.result.City;
 import com.eij.wenjuan.component.bean.result.EchartsBarOption;
@@ -102,6 +102,14 @@ public class RecycleServiceImpl implements RecycleService {
     @Override
     public List<RecycleVO> getByWenjuanId(int wenjuanId) {
         return recycleDao.selectByWenjuanId(wenjuanId);
+    }
+
+    @Override
+    public List<RecycleVO> getByWenjuanIds(List<Integer> wenjuanIdList) {
+        if (CollectionUtils.isEmpty(wenjuanIdList)) {
+            return Lists.newArrayList();
+        }
+        return recycleDao.selectByWenjuanIds(wenjuanIdList);
     }
 
     @Override

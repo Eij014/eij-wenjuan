@@ -15,5 +15,7 @@ public interface RecycleService {
 
     List<RecycleVO> getByWenjuanId(int wenjuanId);
 
+    List<RecycleVO> getByWenjuanIds(List<Integer> wenjuanIdList);
+
     RecycleProcessResponse getWenjuanRecycleProcess(int wenjuanId);
 }
