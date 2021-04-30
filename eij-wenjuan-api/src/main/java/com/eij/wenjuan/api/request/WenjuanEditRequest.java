@@ -19,6 +19,8 @@ public class WenjuanEditRequest {
 
     private String imgUrl;
 
+    private String type;
+
     private List<QuestionVO> questionVOList;
 
     public WenjuanEditRequest(int wenjuanId, String imgUrl, String wenjuanTitle, String welcomeMsg, List<QuestionVO> questionVOList) {
@@ -67,6 +69,14 @@ public class WenjuanEditRequest {
 
     public void setImgUrl(String imgUrl) {
         this.imgUrl = imgUrl;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public List<QuestionVO> getQuestionVOList() {

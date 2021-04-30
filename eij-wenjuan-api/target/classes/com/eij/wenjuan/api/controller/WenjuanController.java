@@ -64,7 +64,6 @@ public class WenjuanController {
 
     @PostMapping("/list")
     public WenjuanResponseMessage<WenjuanVOList> getWenjuanList(@RequestBody WenjuanRequest wenjuanRequest) {
-        int a = 1;
         return WenjuanResponseMessage.success(wenjuanService.getWenjuanList(wenjuanRequest));
     }
 
@@ -75,6 +74,7 @@ public class WenjuanController {
                         wenjuanEditRequest.getImgUrl(),
                         wenjuanEditRequest.getWenjuanTitle(),
                         wenjuanEditRequest.getFolderId(),
+                        wenjuanEditRequest.getType(),
                         wenjuanEditRequest.getWelcomeMsg(),
                         wenjuanEditRequest.getQuestionVOList());
         return WenjuanResponseMessage.success("保存成功", 1);
@@ -116,4 +116,8 @@ public class WenjuanController {
         return WenjuanResponseMessage.success(questionService.getByWenjuanId(wenjuanId));
     }
 
+    @GetMapping("/quote")
+    public WenjuanResponseMessage<Integer> quoteTemplate(@RequestParam("wenjuanId") int wenjuanId) {
+        return WenjuanResponseMessage.success(wenjuanService.quoteTemplate(wenjuanId));
+    }
 }

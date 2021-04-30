@@ -15,6 +15,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import com.eij.wenjuan.component.bean.entity.Wenjuan;
+import com.eij.wenjuan.component.contants.WenjuanType;
 import com.google.common.collect.Lists;
 
 /**
@@ -37,19 +38,19 @@ public class WenjuanDao extends AbstractDao {
     private static final String SQL_SELECT_IDS_BY_CONDITION = "select t1.wenjuan_id from " + TABLE_NAME
             + " t1"
             + " left join `wenjuan_folder_relation` t2 on t1.wenjuan_id = t2.wenjuan_id"
-            + " where t1.committer = :username";
+            + " where t1.type = :type"
+            + " and t1.committer in (:committerList)";
 
     private static final String SQL_KEYWORDS  = " t1.wenjuan_title like :keywords";
 
     private static final String SQL_FOLDER_ID = " t2.wenjuan_folder_id = :folderId";
-
 
     private static final String SQL_ORDER_BY = " order by update_time";
 
     private static final String LIMIT_OFFSET = " limit :limit offset :offset";
 
     private static final String SQL_SELECT = "select * from " + TABLE_NAME
-            + " where committer = :committer";
+            + " where wenjuan_id in (:wenjuanIdByCondition)";
 
     private static final String SQL_DELETE = "delete from " + TABLE_NAME
             + " where wenjuan_id = :wenjuanId";
@@ -65,7 +66,7 @@ public class WenjuanDao extends AbstractDao {
 
 
     private static final String SQL_SELECT_TOTAL = "select count(*) from " + TABLE_NAME
-            + " where `committer` = :committer";
+            + " where `wenjuan_id` in (:wenjuanIdByCondition)";
 
     private static final String SQL_CONDITION = " and wenjuan_id in (:wenjuanIdByCondition)";
 
@@ -94,16 +95,14 @@ public class WenjuanDao extends AbstractDao {
         return getWriter().update(SQL_DELETE, source);
     }
 
-    public List<Wenjuan> selectByUserName(String committer, List<Integer> wenjuanIdByCondition, int limit, int offset) {
+    public List<Wenjuan> selectByUserName(List<Integer> wenjuanIdByCondition, int limit, int offset) {
         if (wenjuanIdByCondition.isEmpty()) {
             return Lists.newArrayList();
         }
 
         StringBuilder sql = new StringBuilder(SQL_SELECT);
         MapSqlParameterSource source = new MapSqlParameterSource();
-        source.addValue("committer", committer);
         source.addValue("wenjuanIdByCondition", wenjuanIdByCondition);
-        sql.append(SQL_CONDITION);
         sql.append(SQL_ORDER_BY);
         sql.append(LIMIT_OFFSET);
         source.addValue("limit", limit);
@@ -111,15 +110,13 @@ public class WenjuanDao extends AbstractDao {
         return getReader().query(sql.toString(), source, ROW_MAPPER);
     }
 
-    public int selectTotalByUserName(String committer, List<Integer> wenjuanIdByCondition) {
+    public int selectTotalByUserName(List<Integer> wenjuanIdByCondition) {
         if (wenjuanIdByCondition.isEmpty()) {
             return 0;
         }
         StringBuilder sql = new StringBuilder(SQL_SELECT_TOTAL);
         MapSqlParameterSource source = new MapSqlParameterSource();
-        source.addValue("committer", committer);
         source.addValue("wenjuanIdByCondition", wenjuanIdByCondition);
-        sql.append(SQL_CONDITION);
 
         int count = Optional.ofNullable(getReader().queryForObject(sql.toString(), source, Integer.class))
                 .orElse(0);
@@ -154,7 +151,7 @@ public class WenjuanDao extends AbstractDao {
         return getWriter().update(SQL_UPDATE_STATUS, source);
     }
 
-    public List<Integer> selectIdsByCondition(String username, int folderId, String keywords) {
+    public List<Integer> selectIdsByCondition(String username, String type, int folderId, String keywords) {
         StringBuilder sql = new StringBuilder(SQL_SELECT_IDS_BY_CONDITION);
         MapSqlParameterSource source = new MapSqlParameterSource();
         List<String> condition = Lists.newArrayList();
@@ -167,8 +164,13 @@ public class WenjuanDao extends AbstractDao {
         if (CollectionUtils.isNotEmpty(condition)) {
             sql.append(" and ");
         }
+        List<String> committerList = Lists.newArrayList(username);
+        if (type.equals(WenjuanType.TEMPLATE.getTypeEn())) {
+            committerList.add("admin");
+        }
         sql.append(String.join(" and ", condition));
-        source.addValue("username", username);
+        source.addValue("type", WenjuanType.parse(type));
+        source.addValue("committerList", committerList);
         source.addValue("folderId", folderId);
         source.addValue("keywords", "%" + keywords + "%");
         return getReader().query(sql.toString(), source, INTEGER_ROW_MAPPER);

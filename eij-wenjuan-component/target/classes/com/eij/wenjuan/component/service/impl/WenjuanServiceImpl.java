@@ -45,6 +45,7 @@ import com.eij.wenjuan.component.bean.result.OptionTitle;
 import com.eij.wenjuan.component.bean.result.WenjuanRequest;
 import com.eij.wenjuan.component.bean.result.WenjuanResult;
 import com.eij.wenjuan.component.contants.QuestionType;
+import com.eij.wenjuan.component.contants.WenjuanType;
 import com.eij.wenjuan.component.dao.WenjuanDao;
 import com.eij.wenjuan.component.service.OptionService;
 import com.eij.wenjuan.component.service.QuestionService;
@@ -131,13 +132,14 @@ public class WenjuanServiceImpl implements WenjuanService {
     public WenjuanVOList getWenjuanList(WenjuanRequest wenjuanRequest) {
         String userName = LoginUserContext.getUserName();
         WenjuanVOList wenjuanVOList = new WenjuanVOList();
-        List<Integer> wenjuanIdByCondition = getWenjuanIdsByCondition(userName, wenjuanRequest.getFolderId(), wenjuanRequest.getKeywords());
+        List<Integer> wenjuanIdByCondition = getWenjuanIdsByCondition(userName, wenjuanRequest.getType(),
+                wenjuanRequest.getFolderId(), wenjuanRequest.getKeywords());
         wenjuanVOList.setCurrentPage(wenjuanRequest.getCurrentPage());
         int limit = wenjuanRequest.getPageSize();
         int offset = (wenjuanRequest.getCurrentPage() - 1) * wenjuanRequest.getPageSize();
-        int total = wenjuanDao.selectTotalByUserName(userName, wenjuanIdByCondition);
+        int total = wenjuanDao.selectTotalByUserName(wenjuanIdByCondition);
         List<Wenjuan> wenjuanList
-                = wenjuanDao.selectByUserName(userName, wenjuanIdByCondition, limit, offset);
+                = wenjuanDao.selectByUserName(wenjuanIdByCondition, limit, offset);
         List<RecycleVO> recycleVOList =
         recycleService.getByWenjuanIds(wenjuanList.stream().map(Wenjuan::getWenjuanId).collect(Collectors.toList()));
         Map<Integer, List<RecycleVO>> wenjuanRecycleMap = recycleVOList
@@ -192,8 +194,8 @@ public class WenjuanServiceImpl implements WenjuanService {
     }
 
     @Override
-    public void createOrUpdateWenjuan(int wenjuanId, String imgUrl, String wenjuanTitle, int folderId,
-                                      String welcomeMsg, List<QuestionVO> questionVOList) {
+    public int createOrUpdateWenjuan(int wenjuanId, String imgUrl, String wenjuanTitle, int folderId,
+                                      String type, String welcomeMsg, List<QuestionVO> questionVOList) {
         String userName = LoginUserContext.getUserName();
         //question和option设置index
         AtomicInteger questionIndex = new AtomicInteger(0);
@@ -234,15 +236,16 @@ public class WenjuanServiceImpl implements WenjuanService {
                     .collect(Collectors.toList());
             createQuestion(wenjuanId, questionNeedCreateList);
 
-
+            return wenjuanId;
         } else {
             wenjuanId = wenjuanDao.
-                        insert(new Wenjuan(wenjuanTitle, welcomeMsg, userName, 0, 0, imgUrl));
+                        insert(new Wenjuan(wenjuanTitle, welcomeMsg, userName, WenjuanType.parse(type), 0, imgUrl));
             createQuestion(wenjuanId, questionVOList);
             //问卷和文件夹关联
             if (folderId != 0) {
                 wenjuanFolderRelationService.insert(new WenjuanFolderRelation(wenjuanId, folderId));
             }
+            return wenjuanId;
         }
     }
 
@@ -474,8 +477,29 @@ public class WenjuanServiceImpl implements WenjuanService {
         return new WenjuanResult(result, pieResult);
     }
 
-    private List<Integer> getWenjuanIdsByCondition(String username, int folderId, String keywords) {
-        return wenjuanDao.selectIdsByCondition(username, folderId, keywords);
+    @Override
+    public int quoteTemplate(int wenjuanId) {
+        Wenjuan wenjuan = wenjuanDao.selectByWenjuanId(wenjuanId);
+        List<Question> questionList = questionService.getByWenjuanId(wenjuanId);
+        Map<Integer, List<Option>> optionMap = optionService.getOptionByQuestionIds(
+                questionList.stream().map(Question::getQuestionId).collect(Collectors.toList())
+        ).stream()
+         .collect(Collectors.groupingBy(Option::getQuestionId));
+        List<QuestionVO> questionVOList = questionList.stream().map(o -> {
+            QuestionVO questionVO = new QuestionVO(0, o.getType(), o.getMust(), o.getTitle(), o.getImgUrls(),
+                    o.getQuestionIndex(), optionMap.get(o.getQuestionId())
+                                          .stream().map(option -> {
+                                              option.setOptionId(0);
+                                              return option;
+                    }).collect(Collectors.toList()));
+            return questionVO;
+        }).collect(Collectors.toList());
+        return createOrUpdateWenjuan(0, wenjuan.getImgUrl(), wenjuan.getWenjuanTitle() + "的副本",
+                0, WenjuanType.SELF.getTypeEn(), wenjuan.getWelcomeMsg(), questionVOList);
+    }
+
+    private List<Integer> getWenjuanIdsByCondition(String username, String type, int folderId, String keywords) {
+        return wenjuanDao.selectIdsByCondition(username, type, folderId, keywords);
     }
 }
 

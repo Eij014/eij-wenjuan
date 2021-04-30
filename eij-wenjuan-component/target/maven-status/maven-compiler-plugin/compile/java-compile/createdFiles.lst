@@ -83,6 +83,7 @@ com\eij\wenjuan\component\exception\WenjuanErrors.class
 com\eij\wenjuan\component\contants\DataSourceType.class
 com\eij\wenjuan\component\dao\ImageDao.class
 com\eij\wenjuan\component\bean\result\EchartsOptionHover.class
+com\eij\wenjuan\component\contants\WenjuanType.class
 com\eij\wenjuan\component\exception\ServiceException.class
 com\eij\wenjuan\component\utils\EventSource.class
 com\eij\wenjuan\component\bean\result\City.class

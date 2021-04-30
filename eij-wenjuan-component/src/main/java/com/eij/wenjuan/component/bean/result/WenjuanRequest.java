@@ -12,6 +12,8 @@ public class WenjuanRequest extends SearchPaging {
 
     private int folderId;
 
+    private String type;
+
     public WenjuanRequest(Integer currentPage, Integer pageSize) {
         super(currentPage, pageSize);
     }
@@ -30,5 +32,13 @@ public class WenjuanRequest extends SearchPaging {
 
     public void setFolderId(int folderId) {
         this.folderId = folderId;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

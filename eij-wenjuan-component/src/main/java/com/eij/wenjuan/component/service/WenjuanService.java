@@ -18,7 +18,8 @@ public interface WenjuanService {
 
     WenjuanDetailVO getWenjuanDetail(int wenjuanId, String type);
 
-    void createOrUpdateWenjuan(int wenjuanId, String imgUrl, String wenjuanTitle, int folderId, String welcomeMsg, List<QuestionVO> questionVOList);
+    int createOrUpdateWenjuan(int wenjuanId, String imgUrl, String wenjuanTitle, int folderId,
+                               String type, String welcomeMsg, List<QuestionVO> questionVOList);
 
     int deleteByWenjuanId(int wenjuanId);
 
@@ -31,4 +32,6 @@ public interface WenjuanService {
     AmapResponse getAddress(String ip);
 
     WenjuanResult getWenjuanResult(int wenjuanId);
+
+    int quoteTemplate(int wenjuanId);
 }
