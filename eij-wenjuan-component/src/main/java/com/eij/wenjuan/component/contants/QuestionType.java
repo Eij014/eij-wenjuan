@@ -9,6 +9,7 @@ public enum QuestionType {
     MULTIPLE_CHOICE("multipleChoice"),
     VIDEO("video"),
     PICTURE("picture"),
+    INPUT("input"),
     UNKNOWN("unknown");
 
     private String nameCamel;

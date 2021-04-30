@@ -14,6 +14,7 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -202,9 +203,11 @@ public class WenjuanServiceImpl implements WenjuanService {
         AtomicInteger optionIndex = new AtomicInteger();
         questionVOList.forEach(questionVO -> {
             questionVO.setQuestionIndex(questionIndex.getAndIncrement());
-            questionVO.getOptionList().forEach(option -> {
-                option.setOptionIndex(optionIndex.getAndIncrement());
-            });
+            if (CollectionUtils.isNotEmpty(questionVO.getOptionList())) {
+                questionVO.getOptionList().forEach(option -> {
+                    option.setOptionIndex(optionIndex.getAndIncrement());
+                });
+            }
         });
         if (wenjuanId != 0) {
 
@@ -273,7 +276,11 @@ public class WenjuanServiceImpl implements WenjuanService {
     private void updateQuestion(int wenjuanId, List<QuestionVO> questionVOList) {
             List<Option> optionList = Lists.newArrayList();
             questionVOList.forEach(o -> {
-                optionList.addAll(o.getOptionList());
+                if (CollectionUtils.isNotEmpty(o.getOptionList())) {
+                    optionList.addAll(o.getOptionList());
+                } else {
+                    o.setOptionList(Lists.newArrayList());
+                }
             });
             List<Question> questionList = questionVOList.stream()
                     .map(o -> {
@@ -369,6 +376,12 @@ public class WenjuanServiceImpl implements WenjuanService {
                                 return new Result(wenjuanId, answer.getQuestionId(),
                                         optionId, "", questionType.getNameCamel(), province, city, uuip);
                         }).collect(Collectors.toList()));
+                    });
+                    break;
+                case INPUT:
+                    o.getValue().forEach(answer -> {
+                        resultList.add(new Result(wenjuanId, answer.getQuestionId(),
+                                0, answer.getText(), questionType.getNameCamel(), province, city, uuip));
                     });
                     break;
                 default:
