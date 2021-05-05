@@ -39,6 +39,7 @@ public class WenjuanDao extends AbstractDao {
             + " t1"
             + " left join `wenjuan_folder_relation` t2 on t1.wenjuan_id = t2.wenjuan_id"
             + " where t1.type = :type"
+            + " and t1.status in (:status)"
             + " and t1.committer in (:committerList)";
 
     private static final String SQL_KEYWORDS  = " t1.wenjuan_title like :keywords";
@@ -151,7 +152,7 @@ public class WenjuanDao extends AbstractDao {
         return getWriter().update(SQL_UPDATE_STATUS, source);
     }
 
-    public List<Integer> selectIdsByCondition(String username, String type, int folderId, String keywords) {
+    public List<Integer> selectIdsByCondition(String username, String type, List<Integer> status, int folderId, String keywords) {
         StringBuilder sql = new StringBuilder(SQL_SELECT_IDS_BY_CONDITION);
         MapSqlParameterSource source = new MapSqlParameterSource();
         List<String> condition = Lists.newArrayList();
@@ -170,6 +171,7 @@ public class WenjuanDao extends AbstractDao {
         }
         sql.append(String.join(" and ", condition));
         source.addValue("type", WenjuanType.parse(type));
+        source.addValue("status", status);
         source.addValue("committerList", committerList);
         source.addValue("folderId", folderId);
         source.addValue("keywords", "%" + keywords + "%");

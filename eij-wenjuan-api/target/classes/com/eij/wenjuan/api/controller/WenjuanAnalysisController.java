@@ -52,4 +52,10 @@ public class WenjuanAnalysisController {
 
     }
 
+
+    @PostMapping("/get/cronbach")
+    public WenjuanResponseMessage<Double> getCrobach(@RequestBody CrossAnalysisRequest crossAnalysisRequest) {
+        return WenjuanResponseMessage.success(resultService.cronbach(crossAnalysisRequest.getQuestionIdXList()));
+    }
+
 }

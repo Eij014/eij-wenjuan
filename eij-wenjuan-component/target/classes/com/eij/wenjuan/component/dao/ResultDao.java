@@ -33,6 +33,11 @@ public class ResultDao  extends AbstractDao {
             + " t1 left join `option` t2 on t1.option_id = t2.option_id"
             + " where t1.wenjuan_id = :wenjuanId";
 
+    private static final String SQL_SELECT_BY_QUESTION_IDS = "select t1.*,t2.option_name from " + TABLE_NAME
+            + " t1 left join `option` t2 on t1.option_id = t2.option_id"
+            + " where t1.question_id in (:questionIdList)";
+
+
     private static final String SQL_SELECT_COUNT_GROUP_BY_TIME = "select count(1),create_time from " + TABLE_NAME
             + " group_by create_time";
 
@@ -79,4 +84,10 @@ public class ResultDao  extends AbstractDao {
         return getReader().query(SQL_SELECT, source, ROW_MAPPER);
     }
 
+
+    public List<ResultVO> selectByQuestionIds(List<Integer> questionIdList) {
+        MapSqlParameterSource source = new MapSqlParameterSource();
+        source.addValue("questionIdList", questionIdList);
+        return getReader().query(SQL_SELECT_BY_QUESTION_IDS, source, ROW_MAPPER);
+    }
 }

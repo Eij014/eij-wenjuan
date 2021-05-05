@@ -17,4 +17,8 @@ public interface ResultService {
     List<ResultVO> getByWenjuanId(int wenjuanId);
 
     List<CrossAnalysisVO> getCrossAnalysis(int wenjuanId, List<Integer> questionIdXList, List<Integer> questionIdYList);
+
+    List<ResultVO> getByQuestionIdList(List<Integer> questionIdList);
+
+    double cronbach(List<Integer> questionIdList);
 }

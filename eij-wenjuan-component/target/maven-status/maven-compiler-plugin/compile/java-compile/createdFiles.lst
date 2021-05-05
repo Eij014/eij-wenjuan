@@ -28,6 +28,7 @@ com\eij\wenjuan\component\service\impl\ResultServiceImpl.class
 com\eij\wenjuan\component\dao\WenjuanBrowseDao.class
 com\eij\wenjuan\component\service\ResultService.class
 com\eij\wenjuan\component\bean\result\WenjuanRequest.class
+com\eij\wenjuan\component\contants\WenjuanStatus.class
 com\eij\wenjuan\component\service\ImageUploadService.class
 com\eij\wenjuan\component\service\WenjuanFolderRelationService.class
 com\eij\wenjuan\component\service\WenjuanBrowseService.class
@@ -57,6 +58,7 @@ com\eij\wenjuan\component\service\impl\WenjuanBrowseServiceImpl.class
 com\eij\wenjuan\component\dao\AbstractDao.class
 com\eij\wenjuan\component\service\impl\RecycleServiceImpl.class
 com\eij\wenjuan\component\dao\ResultDao.class
+com\eij\wenjuan\component\contants\WenjuanStatus$1.class
 com\eij\wenjuan\component\bean\common\Paging.class
 com\eij\wenjuan\component\service\blobStore\impl\BlobStoreServiceImpl.class
 com\eij\wenjuan\component\bean\result\EchartsSeries.class

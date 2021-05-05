@@ -14,6 +14,8 @@ public class WenjuanRequest extends SearchPaging {
 
     private String type;
 
+    private String status;
+
     public WenjuanRequest(Integer currentPage, Integer pageSize) {
         super(currentPage, pageSize);
     }
@@ -40,5 +42,13 @@ public class WenjuanRequest extends SearchPaging {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

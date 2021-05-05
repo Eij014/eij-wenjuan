@@ -120,4 +120,5 @@ public class WenjuanController {
     public WenjuanResponseMessage<Integer> quoteTemplate(@RequestParam("wenjuanId") int wenjuanId) {
         return WenjuanResponseMessage.success(wenjuanService.quoteTemplate(wenjuanId));
     }
+
 }

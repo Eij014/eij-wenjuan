@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -154,5 +155,70 @@ public class ResultServiceImpl implements ResultService {
             });
         });
         return crossAnalysisVOList;
+    }
+
+    /**
+     *  克隆巴赫系数信度分析
+     */
+    @Override
+    public List<ResultVO> getByQuestionIdList(List<Integer> questionIdList) {
+        if (CollectionUtils.isEmpty(questionIdList)) {
+            return Lists.newArrayList();
+        }
+        return resultDao.selectByQuestionIds(questionIdList);
+    }
+
+    public double cronbach(List<Integer> questionIdList) {
+        if (CollectionUtils.isEmpty(questionIdList)) {
+            return 0;
+        }
+        int k = questionIdList.size();
+        if (k == 1) {
+            return 1;
+        }
+        List<ResultVO> resultVOList = getByQuestionIdList(questionIdList);
+        //按questionId group by 求每个问题的样本方差
+        Map<Integer, List<ResultVO>> questionIdMap = resultVOList
+                .stream()
+                .collect(Collectors.groupingBy(ResultVO::getQuestionId));
+        AtomicReference<Double> varianceSum = new AtomicReference<Double>(0.00);
+        questionIdMap.forEach((key, v) -> {
+            varianceSum.updateAndGet(v1 -> new Double((double) (v1 + getVariance(v.stream().map(o -> {
+                return Integer.parseInt(o.getText());
+            }).collect(Collectors.toList())))));
+        });
+        //按uuid group by 求总体方差
+        List<Integer> overallNumber = Lists.newArrayList();
+        Map<String, List<ResultVO>> uuidMap = resultVOList
+                .stream()
+                .collect(Collectors.groupingBy(ResultVO::getUuid));
+        uuidMap.forEach((key, v) -> {
+            overallNumber.add(v.stream().mapToInt(o -> Integer.parseInt(o.getText())).sum());
+        });
+        double overallVariance = getVariance(overallNumber);
+        return ((double) k / (k - 1)) * (1 - varianceSum.get() / overallVariance);
+    }
+
+    /**
+     * 求方差
+     */
+    private double getVariance(List<Integer> numberList) {
+        if (CollectionUtils.isEmpty(numberList)) {
+            return 0;
+        }
+        int k = numberList.size();
+        //样本和
+        AtomicInteger atomicInteger = new AtomicInteger(0);
+        numberList.forEach(o -> {
+            atomicInteger.getAndAdd(o);
+        });
+        //平均数
+        double average = (double) atomicInteger.get() / k;
+        //方差
+        AtomicReference<Double> variance = new AtomicReference<Double>(0.00);
+        numberList.forEach(o -> {
+            variance.updateAndGet(v -> v + Math.pow((o - average), 2));
+        });
+        return variance.get() / (k - 1);
     }
 }

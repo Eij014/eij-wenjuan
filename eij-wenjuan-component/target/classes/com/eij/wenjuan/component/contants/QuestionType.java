@@ -10,6 +10,7 @@ public enum QuestionType {
     VIDEO("video"),
     PICTURE("picture"),
     INPUT("input"),
+    SCORE("score"),
     UNKNOWN("unknown");
 
     private String nameCamel;

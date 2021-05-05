@@ -46,6 +46,7 @@ import com.eij.wenjuan.component.bean.result.OptionTitle;
 import com.eij.wenjuan.component.bean.result.WenjuanRequest;
 import com.eij.wenjuan.component.bean.result.WenjuanResult;
 import com.eij.wenjuan.component.contants.QuestionType;
+import com.eij.wenjuan.component.contants.WenjuanStatus;
 import com.eij.wenjuan.component.contants.WenjuanType;
 import com.eij.wenjuan.component.dao.WenjuanDao;
 import com.eij.wenjuan.component.service.OptionService;
@@ -133,7 +134,7 @@ public class WenjuanServiceImpl implements WenjuanService {
     public WenjuanVOList getWenjuanList(WenjuanRequest wenjuanRequest) {
         String userName = LoginUserContext.getUserName();
         WenjuanVOList wenjuanVOList = new WenjuanVOList();
-        List<Integer> wenjuanIdByCondition = getWenjuanIdsByCondition(userName, wenjuanRequest.getType(),
+        List<Integer> wenjuanIdByCondition = getWenjuanIdsByCondition(userName, wenjuanRequest.getType(), wenjuanRequest.getStatus(),
                 wenjuanRequest.getFolderId(), wenjuanRequest.getKeywords());
         wenjuanVOList.setCurrentPage(wenjuanRequest.getCurrentPage());
         int limit = wenjuanRequest.getPageSize();
@@ -379,6 +380,7 @@ public class WenjuanServiceImpl implements WenjuanService {
                     });
                     break;
                 case INPUT:
+                case SCORE:
                     o.getValue().forEach(answer -> {
                         resultList.add(new Result(wenjuanId, answer.getQuestionId(),
                                 0, answer.getText(), questionType.getNameCamel(), province, city, uuip));
@@ -511,8 +513,8 @@ public class WenjuanServiceImpl implements WenjuanService {
                 0, WenjuanType.SELF.getTypeEn(), wenjuan.getWelcomeMsg(), questionVOList);
     }
 
-    private List<Integer> getWenjuanIdsByCondition(String username, String type, int folderId, String keywords) {
-        return wenjuanDao.selectIdsByCondition(username, type, folderId, keywords);
+    private List<Integer> getWenjuanIdsByCondition(String username, String type, String status, int folderId, String keywords) {
+        return wenjuanDao.selectIdsByCondition(username, type, WenjuanStatus.parse(status), folderId, keywords);
     }
 }
 
