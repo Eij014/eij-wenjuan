@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.eij.wenjuan.api.response.WenjuanResponseMessage;
 import com.eij.wenjuan.component.bean.VO.CrossAnalysisVO;
+import com.eij.wenjuan.component.bean.VO.RecycleDataVOList;
 import com.eij.wenjuan.component.bean.request.CrossAnalysisRequest;
 import com.eij.wenjuan.component.bean.result.RecycleProcessResponse;
 import com.eij.wenjuan.component.bean.result.WenjuanResult;
@@ -56,6 +57,11 @@ public class WenjuanAnalysisController {
     @PostMapping("/get/cronbach")
     public WenjuanResponseMessage<Double> getCrobach(@RequestBody CrossAnalysisRequest crossAnalysisRequest) {
         return WenjuanResponseMessage.success(resultService.cronbach(crossAnalysisRequest.getQuestionIdXList()));
+    }
+
+    @GetMapping("get/data")
+    public WenjuanResponseMessage<RecycleDataVOList> getData(@RequestParam("wenjuanId") int wenjuanId) {
+        return WenjuanResponseMessage.success(resultService.getData(wenjuanId));
     }
 
 }

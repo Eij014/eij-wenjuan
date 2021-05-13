@@ -441,53 +441,62 @@ public class WenjuanServiceImpl implements WenjuanService {
             EchartsBarOption echartsBarOption = new EchartsBarOption();
             echartsBarOption.setQuestionId(question.getKey());
             echartsBarOption.setQuestionName(questionNameMap.get(question.getKey()));
-            echartsBarOption.setxAxis(new Data(Lists.newArrayList(optionNameMap.get(question.getKey()).values())));
-            //柱状图、折线图数据
-            List<Integer> yData = Lists.newArrayList();
-            //饼状图数据
-            List<NameValueBean> pieData = Lists.newArrayList();
-            //图例
-            List<String> legendData = Lists.newArrayList();
-            //总结果，用于计算饼图百分比
-            AtomicInteger total = new AtomicInteger();
-            //饼状图colorList
-            List<String> pieColor = Lists.newArrayList();
-            optionNameMap.get(question.getKey()).forEach((optionId, optionName) -> {
-                int data = question.getValue().containsKey(optionId)
-                        ? question.getValue().get(optionId).size()
-                        : 0;
-                total.addAndGet(data);
-                yData.add(data);
-                pieData.add(new NameValueBean(optionName, data));
-                pieColor.add(COLOR_LIST.get(pieData.size() % COLOR_LIST.size()));
-                legendData.add(optionName);
-            });
-            //柱状图、折线无图例
-            echartsBarOption.setLegend(new Data());
-            //y坐标也不设置
-            echartsBarOption.setyAxis(new Data());
-            //标题
-            echartsBarOption.setTitle(new OptionTitle(questionNameMap.get(question.getKey()), "", "center", "top"));
-            //hover效果
-            echartsBarOption.setTooltip(new EchartsOptionHover("axis", null));
-            //柱状图、折线图颜色
-            echartsBarOption.setColor(Lists.newArrayList(COLOR_LIST.get(0)));
 
-            pieData.forEach(o -> {
-                double percent = ((double) o.getValue() / total.get()) * 100;
-                String percentStr = Math.floor(percent) + "%";
-                o.setName(String.format("%s:(%s)", o.getName(), percentStr));
 
-            });
-            echartsBarOption.setSeries(Lists.newArrayList(new EchartsSeries("", "bar", 30, yData)
-                    ));
-            echartsBarOption.setFormType("bar");
-            result.add(echartsBarOption);
-            pieResult.add(new EchartsPieOption(echartsBarOption.getQuestionId(), echartsBarOption.getQuestionName(), "pie",
-                    echartsBarOption.getTitle(), new Data(legendData),
-                    Lists.newArrayList(new EchartsPieSeries("", "pie", pieData)),
-                    new EchartsOptionHover("item", "{b}:{c}"),
-                    pieColor));
+            if (optionNameMap.containsKey(question.getKey())) {
+                List<String> optionData = optionNameMap.containsKey(question.getKey())
+                        ? Lists.newArrayList(optionNameMap.get(question.getKey()).values())
+                        : Lists.newArrayList();
+                echartsBarOption.setxAxis(new Data(optionData));
+                //柱状图、折线图数据
+                List<Integer> yData = Lists.newArrayList();
+                //饼状图数据
+                List<NameValueBean> pieData = Lists.newArrayList();
+                //图例
+                List<String> legendData = Lists.newArrayList();
+                //总结果，用于计算饼图百分比
+                AtomicInteger total = new AtomicInteger();
+                //饼状图colorList
+                List<String> pieColor = Lists.newArrayList();
+                optionNameMap.get(question.getKey()).forEach((optionId, optionName) -> {
+                    int data = question.getValue().containsKey(optionId)
+                            ? question.getValue().get(optionId).size()
+                            : 0;
+                    total.addAndGet(data);
+                    yData.add(data);
+                    pieData.add(new NameValueBean(optionName, data));
+                    pieColor.add(COLOR_LIST.get(pieData.size() % COLOR_LIST.size()));
+                    legendData.add(optionName);
+                });
+                //柱状图、折线无图例
+                echartsBarOption.setLegend(new Data());
+                //y坐标也不设置
+                echartsBarOption.setyAxis(new Data());
+                //标题
+                echartsBarOption.setTitle(new OptionTitle(questionNameMap.get(question.getKey()), "", "center", "top"));
+                //hover效果
+                echartsBarOption.setTooltip(new EchartsOptionHover("axis", null));
+                //柱状图、折线图颜色
+                echartsBarOption.setColor(Lists.newArrayList(COLOR_LIST.get(0)));
+
+                pieData.forEach(o -> {
+                    double percent = ((double) o.getValue() / total.get()) * 100;
+                    String percentStr = Math.floor(percent) + "%";
+                    o.setName(String.format("%s:(%s)", o.getName(), percentStr));
+
+                });
+                echartsBarOption.setSeries(Lists.newArrayList(new EchartsSeries("", "bar", 30, yData)
+                ));
+                echartsBarOption.setFormType("bar");
+                if (CollectionUtils.isNotEmpty(echartsBarOption.getxAxis().getData())) {
+                    result.add(echartsBarOption);
+                    pieResult.add(new EchartsPieOption(echartsBarOption.getQuestionId(), echartsBarOption.getQuestionName(), "pie",
+                            echartsBarOption.getTitle(), new Data(legendData),
+                            Lists.newArrayList(new EchartsPieSeries("", "pie", pieData)),
+                            new EchartsOptionHover("item", "{b}:{c}"),
+                            pieColor));
+                }
+            }
         });
         return new WenjuanResult(result, pieResult);
     }

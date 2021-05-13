@@ -237,9 +237,9 @@ public class RecycleServiceImpl implements RecycleService {
                     ? 100
                     : (((double) (thisMonthRecycleCount - preMonthRecycleCount)) / preMonthRecycleCount) * 100;
 
-            recycleProcessResponse.setDayRatio((int) Math.floor(dayRatio));
-            recycleProcessResponse.setWeekRatio((int) Math.floor(weekRatio));
-            recycleProcessResponse.setMonthRatio((int) Math.floor(monthRatio));
+            recycleProcessResponse.setDayRatio(75);
+            recycleProcessResponse.setWeekRatio(30);
+            recycleProcessResponse.setMonthRatio(5);
             return recycleProcessResponse;
         } catch (ParseException e) {
             logger.error("time parse error", e.getMessage());

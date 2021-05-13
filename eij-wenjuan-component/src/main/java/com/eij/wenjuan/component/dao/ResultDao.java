@@ -1,6 +1,7 @@
 package com.eij.wenjuan.component.dao;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,9 +30,11 @@ public class ResultDao  extends AbstractDao {
             + " values"
             + " (:wenjuanId,:questionId,:optionId,:type,:text,:createTime,:province, :city,:uuid)";
 
-    private static final String SQL_SELECT = "select t1.*,t2.option_name from " + TABLE_NAME
+    private static final String SQL_SELECT = "select t1.*,t3.title,t2.option_name from " + TABLE_NAME
             + " t1 left join `option` t2 on t1.option_id = t2.option_id"
-            + " where t1.wenjuan_id = :wenjuanId";
+            + " left join `question` t3 on t1.question_id = t3.question_id"
+            + " where t1.wenjuan_id = :wenjuanId"
+            + " order by t3.question_index,t2.option_index";
 
     private static final String SQL_SELECT_BY_QUESTION_IDS = "select t1.*,t2.option_name from " + TABLE_NAME
             + " t1 left join `option` t2 on t1.option_id = t2.option_id"
@@ -47,6 +50,11 @@ public class ResultDao  extends AbstractDao {
         resultVO.setId(rs.getInt("id"));
         resultVO.setWenjuanId(rs.getInt("wenjuan_id"));
         resultVO.setQuestionId(rs.getInt("question_id"));
+        try {
+            resultVO.setQuestionName(rs.getString("title"));
+        } catch (Exception exception) {
+             int a = 1;
+        }
         resultVO.setOptionId(rs.getInt("option_id"));
         resultVO.setOptionName(rs.getString("option_name"));
         resultVO.setText(rs.getString("text"));

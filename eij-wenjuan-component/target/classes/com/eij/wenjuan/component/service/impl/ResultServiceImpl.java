@@ -1,6 +1,8 @@
 package com.eij.wenjuan.component.service.impl;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -13,6 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.eij.wenjuan.component.bean.VO.CrossAnalysisVO;
+import com.eij.wenjuan.component.bean.VO.QuestionVO;
+import com.eij.wenjuan.component.bean.VO.RecycleDataVO;
+import com.eij.wenjuan.component.bean.VO.RecycleDataVOList;
 import com.eij.wenjuan.component.bean.VO.ResultVO;
 import com.eij.wenjuan.component.bean.entity.Option;
 import com.eij.wenjuan.component.bean.entity.Question;
@@ -220,5 +225,56 @@ public class ResultServiceImpl implements ResultService {
             variance.updateAndGet(v -> v + Math.pow((o - average), 2));
         });
         return variance.get() / (k - 1);
+    }
+
+    @Override
+    public RecycleDataVOList getData(int wenjuanId) {
+        List<ResultVO> resultVOList = resultDao.selectByWenjuanId(wenjuanId);
+        Map<String, List<ResultVO>> uuidMap = resultVOList
+                .stream()
+                .collect(Collectors.groupingBy(ResultVO::getUuid));
+        List<String> questionNameList = Lists.newArrayList();
+        List<RecycleDataVO> recycleDataVOListList = Lists.newArrayList();
+        List<Map<String, String>> dataList = new ArrayList<>();
+        AtomicInteger index = new AtomicInteger(1);
+        uuidMap.forEach((k, v) -> {
+            Map<Integer, List<ResultVO>> optionMap = v.stream().collect(Collectors.groupingBy(Result::getQuestionId));
+            Map<String, String> data = new LinkedHashMap<>();
+            RecycleDataVO recycleDataVO = new RecycleDataVO();
+
+            data.put("编号", Integer.toString(index.getAndIncrement()));
+            recycleDataVO.setQuestionVOList(v.stream().map(o -> {
+                List<Option> optionList = optionMap.get(o.getQuestionId()).stream().map(option -> {
+                    return new Option(option.getOptionId(), option.getQuestionId(), option.getOptionName(), 0);
+                }).collect(Collectors.toList());
+                if (new ArrayList<String>() {{
+                    add("input");
+                    add("score");
+                }}.contains(o.getType())) {
+                    ResultVO resultVO = optionMap.get(o.getQuestionId()).get(0);
+                    optionList.clear();
+                    optionList.add(new Option(resultVO.getOptionId(), resultVO.getQuestionId(), resultVO.getText(), 0));
+                }
+                String optionStr = String.join(",", optionList.stream().map(Option::getOptionName).collect(Collectors.toList()));
+
+                data.put(o.getQuestionName(), optionStr);
+
+                return new QuestionVO(o.getQuestionId(), o.getType(), 0, o.getQuestionName(), "", 0, optionList);
+            }).collect(Collectors.toList()));
+            recycleDataVO.setLocation(v.get(0).getProvince() + "-" + v.get(0).getCity());
+            recycleDataVOListList.add(recycleDataVO);
+            data.put("地理位置", recycleDataVO.getLocation());
+            dataList.add(data);
+        });
+        if (CollectionUtils.isNotEmpty(recycleDataVOListList)) {
+            questionNameList = recycleDataVOListList.get(0).getQuestionVOList()
+                    .stream().map(QuestionVO::getTitle)
+                    .distinct()
+                    .collect(Collectors.toList());
+            questionNameList.add(0, "编号");
+        }
+        questionNameList.add("地理位置");
+        return new RecycleDataVOList(recycleDataVOListList, questionNameList, dataList);
+
     }
 }
